@@ -41,12 +41,7 @@ pygame.display.set_caption("Unnamed Ship Game - Xeo Productions")
 
 fpsFont = pygame.font.Font(None, 15)
 
-
-#Image/Rect Declaration
-#Template
-#IMAGE = pygame.image.load("IMAGE.PNG")
-#IMAGERect = IMAGE.get_rect()
-
+#Images
 bkg = pygame.image.load("f3TAE.png")
 bkgRect = bkg.get_rect()
 bkgRect.center = screen_center
@@ -67,12 +62,54 @@ def wipeScreenWhite():
 	#global Starting
 	#Starting = False
 
-#Variable Definition
-timeVar = 0
-Starting = True
+
+#Object Declaration:
+# Class for the orange dude
+class Player(object):
+	
+	def __init__(self):
+		self.rect = pygame.Rect(32, 32, 16, 16)
+
+	def move(self, dx, dy):
+		
+		# Move each axis separately. Note that this checks for collisions both times.
+		if dx != 0:
+			self.move_single_axis(dx, 0)
+		if dy != 0:
+			self.move_single_axis(0, dy)
+	
+	def move_single_axis(self, dx, dy):
+
+		# Move the rect
+		self.rect.x += dx
+		self.rect.y += dy
+
+		# If you collide with a block, move out based on velocity
+		for block in blocks:
+			if self.rect.colliderect(block.rect):
+				if dx > 0: # Moving right; Hit the left side of the block
+					self.rect.right = block.rect.left
+				if dx < 0: # Moving left; Hit the right side of the block
+					self.rect.left = block.rect.right
+				if dy > 0: # Moving down; Hit the top side of the block
+					self.rect.bottom = block.rect.top
+				if dy < 0: # Moving up; Hit the bottom side of the block
+					self.rect.top = block.rect.bottom
+
+class Block(object):
+	
+	def __init__(self, pos):
+		blocks.append(self)
+		self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
 
+#Program Loops
+timeVar = 0 # Amount of time that has passed
+Starting = True # Whether or not to show the splashscreen
 Running = True
+
+blocks = [] # List to hold the blocks
+player = Player() # Create the player
 
 while Running:
 	while Starting == True:
@@ -81,7 +118,7 @@ while Running:
 			if event.type == pygame.QUIT:
 				Starting == False
 				Running = False
-		if timeVar == 500:
+		if timeVar == 150:
 			timeVar = 0
 			Starting = False
 			
@@ -108,9 +145,22 @@ while Running:
 			if event.key == pygame.K_ESCAPE:
 				Running = False
 
+
+	#Capturing Mouse Position
 	mousePos = pygame.mouse.get_pos()
 	mouseX = mousePos[0]
 	mouseY = mousePos[1]
+
+	#Capturing and Responding to Keys
+	key = pygame.key.get_pressed()
+	if key[pygame.K_LEFT]:
+		player.move(-2, 0)
+	if key[pygame.K_RIGHT]:
+		player.move(2, 0)
+	if key[pygame.K_UP]:
+		player.move(0, -2)
+	if key[pygame.K_DOWN]:
+		player.move(0, 2)
 	
 	#FPS LABEL
 	fps = Clock.get_fps()
@@ -120,6 +170,9 @@ while Running:
 
 	wipeScreenWhite()
 	screen.blit(bkg, bkgRect)
+	for block in blocks:
+		pygame.draw.rect(screen, (255, 255, 255), block.rect)
+	pygame.draw.rect(screen, (255, 200, 0), player.rect)
 	screen.blit(fpsLabel, (10, 10))
 	pygame.display.flip()
 	Clock.tick(30)
