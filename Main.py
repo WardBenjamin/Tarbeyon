@@ -26,8 +26,8 @@ deepBlue = (35, 68, 255)
 yellow = (255, 255, 0)
 
 #Screen Definition
-screenX = 950
-screenY = 500
+screenX = 928
+screenY = 480
 
 screenX_center = screenX/2
 screenY_center = screenY/2
@@ -59,6 +59,7 @@ Clock = pygame.time.Clock()
 
 #Variable Declaration
 goodsAvailable = 0
+moveAvailable = False
 
 
 #Definitions
@@ -104,16 +105,16 @@ class Player(object):
 		for port in ports:
 			if self.rect.colliderect(port.rect):
 				if dx > 0: # Moving right; Hit the left side of a port
-					self.rect.right = port.rect.right
+					self.rect.right = port.rect.left
 					self.atPort = True
 				if dx < 0: # Moving left; Hit the right side of a port
-					self.rect.left = port.rect.left
+					self.rect.left = port.rect.right
 					self.atPort = True
 				if dy > 0: # Moving down; Hit the top side of a port
-					self.rect.bottom = port.rect.bottom
+					self.rect.bottom = port.rect.top
 					self.atPort = True
 				if dy < 0: # Moving up; Hit the bottom side of a port
-					self.rect.top = port.rect.top
+					self.rect.top = port.rect.bottom
 					self.atPort = True
 
 		# If you collide with a block, move out based on velocity
@@ -166,7 +167,7 @@ level = [
 ]
 
 # Parse the level string above. W = wall, E = exit
-x = 155
+x = 144
 y = 0
 for row in level:
     for col in row:
@@ -176,7 +177,7 @@ for row in level:
             Port((x, y,))
         x += 32
     y += 32
-    x = 155
+    x = 144
 
 #Program Loops
 timeVar = 0 # Amount of time that has passed
@@ -247,13 +248,18 @@ while Running:
 		player.goodsNumber = 0
 
 		goodsAvailable = random.randrange(1, 20)
-		player.goodsNumber = int(input("How many goods would you like to take? The max is: ", goodsAvailable, "."))
+		print("How many goods would you like to take? The max is: ", goodsAvailable)
+		player.goodsNumber = int(input(">>>"))
 		if player.goodsNumber > goodsAvailable:
-			player.goodsNumber = int(input("You can only take up to: ", goodsAvailable, ". Pick another number."))
+			print("You can only take up to: ", goodsAvailable, ". Pick another number.")
+			player.goodsNumber = int(input(">>>"))
+			print("You have brought ", player.goodsNumber," goods on board.")
 			player.goodsNumberString = str(player.goodsNumber)
+			player.atPort = False
 		else:
 			print("You have brought ", player.goodsNumber," goods on board.")
 			player.goodsNumberString = str(player.goodsNumber)
+			player.atPort = False
 
 	#Goods and Money Labels
 	goodsLabel = goodsFont.render(player.goodsNumberString, 20, black)
@@ -268,8 +274,8 @@ while Running:
 	for port in ports:
 		pygame.draw.rect(screen, deepBlue, port.rect)
 	pygame.draw.rect(screen, (255, 200, 0), player.rect)
-	screen.blit(goodsLabel, (30, 10))
-	screen.blit(moneyLabel, (50, 10))
+	screen.blit(goodsLabel, (10, 50))
+	screen.blit(moneyLabel, (10, 30))
 	screen.blit(fpsLabel, (10, 10))
 	pygame.display.flip()
 	Clock.tick(30)
