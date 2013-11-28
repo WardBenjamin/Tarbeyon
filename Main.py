@@ -247,7 +247,7 @@ while Running:
 		player.moneyString =  str(player.money)
 		player.goodsNumber = 0
 
-		goodsAvailable = random.randrange(1, 20)
+		goodsAvailable = random.randrange(10, 20)
 		print("How many goods would you like to take? The max is: ", goodsAvailable)
 		player.goodsNumber = int(input(">>>"))
 		if player.goodsNumber > goodsAvailable:
@@ -262,8 +262,10 @@ while Running:
 			player.atPort = False
 
 	#Goods and Money Labels
-	goodsLabel = goodsFont.render(player.goodsNumberString, 20, black)
-	moneyLabel = moneyFont.render(player.moneyString, 20, black)
+	goodsLabel = goodsFont.render("Goods Carrying:", 20, black)
+	goodsLabelLineTwo = goodsFont.render(player.goodsNumberString, 20, black)
+	moneyLabel = moneyFont.render("Money:", 20, black)
+	moneyLabelLineTwo = moneyFont.render(player.moneyString, 20, black)
 
 
 	#Drawing to Screen
@@ -275,7 +277,9 @@ while Running:
 		pygame.draw.rect(screen, deepBlue, port.rect)
 	pygame.draw.rect(screen, (255, 200, 0), player.rect)
 	screen.blit(goodsLabel, (10, 50))
+	screen.blit(goodsLabelLineTwo, (10, 60))
 	screen.blit(moneyLabel, (10, 30))
+	screen.blit(moneyLabelLineTwo, (10, 40))
 	screen.blit(fpsLabel, (10, 10))
 	pygame.display.flip()
 	Clock.tick(30)
