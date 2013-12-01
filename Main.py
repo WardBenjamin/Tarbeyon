@@ -5,6 +5,8 @@ import random
 
 pygame.init()
 pygame.font.init()
+pygame.mixer.init()
+
 
 #Colors
 black = (0, 0, 0)
@@ -46,46 +48,197 @@ fpsFont = pygame.font.Font(None, 15)
 moneyFont = pygame.font.Font(None, 15)
 goodsFont = pygame.font.Font(None, 15)
 
+turnFont = pygame.font.Font(None, 20)
+
 #Images
-bkg = pygame.image.load("f3TAE.png")
+bkg = pygame.image.load("f3TAE.png").convert()
 bkgRect = bkg.get_rect()
 bkgRect.center = screen_center
 
-splash = pygame.image.load("Splash.png")
+splash = pygame.image.load("Splash.png").convert()
 splashRect = splash.get_rect()
 splashRect.center = screen_center
 
+#Sounds/Music
+intro_music_ogg_file = "Music\IntroMusic.ogg"
+intro_music_ogg = pygame.mixer.Sound(intro_music_ogg_file)
+
 Clock = pygame.time.Clock()
 
-#Variable Declaration
+#Variable and Constant Declaration
 goodsAvailable = 0
 moveAvailable = False
-
+captureMouse = False
+timeVar = 0
+#VALID_STATES = ['player_turn', 'enemy_turn', 'splashscreen', 'menu', 'paused',]
+state = "splashscreen"
 
 #Definitions
 def wipeScreenWhite():
 	screen.fill(white)
-#def displaySplashscreen():
-	#screen.fill(teal)
-	#time.sleep(2)
-	#global Starting
-	#Starting = False
+def main_game_loop():
+	global state
+	global timeVar
+	global captureMouse
+
+	#Splashscreen Loop
+	if state == "splashscreen":
+		if timeVar == 0:
+			channel = intro_music_ogg.play()
+		timeVar = timeVar + 1
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				Running = False
+		if timeVar == 450:
+			timeVar = 0
+			state = "player_turn"
+			captureMouse = True
+
+		pygame.mouse.set_pos(screen_center)
+		pygame.mouse.set_visible(False)
+			
+		#FPS LABEL
+		fps = Clock.get_fps()
+		fps = round(fps, 2)
+		fpsString = str(fps)
+		fpsLabel = fpsFont.render(fpsString, 20, black)		
+		
+		#Drawing to screen
+		wipeScreenWhite()
+		screen.blit(splash, splashRect)
+		screen.blit(fpsLabel, (10, 10))
+		pygame.display.flip()
+		Clock.tick(50)
+
+	#Player Turn Loop
+	if state == "player_turn":
+		timeVar = timeVar + 1
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				Running = False
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_ESCAPE:
+					Running = False
+	
+	
+		#Capturing Mouse Position
+		if captureMouse == True:
+			pygame.mouse.set_visible(True)
+			mousePos = pygame.mouse.get_pos()
+			mouseX = mousePos[0]
+			mouseY = mousePos[1]
+		else:
+			pygame.mouse.set_visible(False)
+			pygame.mouse.set_pos(screen_center)
+	
+		#Capturing and Responding to Keys
+		key = pygame.key.get_pressed()
+		if key[pygame.K_LEFT]:
+			player.move(-32, 0)
+		if key[pygame.K_RIGHT]:
+			player.move(32, 0)
+		if key[pygame.K_UP]:
+			player.move(0, -32)
+		if key[pygame.K_DOWN]:
+			player.move(0, 32)
+		
+		#FPS LABEL
+		fps = Clock.get_fps()
+		fps = round(fps, 2)
+		fpsString = str(fps)
+		fpsLabel = fpsFont.render(fpsString, 20, black)	
+	
+		if player.atPort == True:
+			player.money = player.money + (10*player.goodsNumber)
+			player.moneyString =  str(player.money)
+			player.goodsNumber = 0
+	
+			#if atPortA == True:
+			#	atPortA == False
+			#	atPortB = True
+			#elif atPortB == True:
+			#	atPortB = False
+			#	atPortA = True
+			#else: atPortA = True
+	
+			goodsAvailable = random.randrange(10, 20)
+			print("How many goods would you like to take? The max is: ", goodsAvailable)
+			player.goodsNumber = int(input(">>>"))
+			if player.goodsNumber > goodsAvailable:
+				print("You can only take up to: ", goodsAvailable, ". Pick another number.")
+				player.goodsNumber = int(input(">>>"))
+				print("You have brought ", player.goodsNumber," goods on board.")
+				player.goodsNumberString = str(player.goodsNumber)
+				player.atPort = False
+			else:
+				print("You have brought ", player.goodsNumber," goods on board.")
+				player.goodsNumberString = str(player.goodsNumber)
+				player.atPort = False
+	
+		#Labels
+
+		#Goods Labels (temp)
+		goodsLabel = goodsFont.render("Goods Carrying:", 20, black)
+		goodsLabelLineTwo = goodsFont.render(player.goodsNumberString, 20, black)
+
+		#Money Labels (temp)
+		moneyLabel = moneyFont.render("Money:", 20, black)
+		moneyLabelLineTwo = moneyFont.render(player.moneyString, 20, black)
+	
+		#Turn Labels
+		turnLabel = turnFont.render("Turn: Player", 20, blue)
+	
+		#Drawing to Screen
+		wipeScreenWhite()
+		screen.blit(bkg, bkgRect)
+		for block in blocks:
+			pygame.draw.rect(screen, (0, 0, 0), block.rect)
+		for port in ports:
+			pygame.draw.rect(screen, deepBlue, port.rect)
+		# WIP Pirates
+		#for pirate in pirates:
+		#	pygame.draw.rect(screen, red, pirate.rect)
+		pygame.draw.rect(screen, (255, 200, 0), player.rect)
+		screen.blit(goodsLabel, (10, 50))
+		screen.blit(goodsLabelLineTwo, (10, 60))
+		screen.blit(moneyLabel, (10, 30))
+		screen.blit(moneyLabelLineTwo, (10, 40))
+		screen.blit(turnLabel, (10, 450))
+		screen.blit(fpsLabel, (10, 10))
+		pygame.display.flip()
+		Clock.tick(30)
 
 
 #Object Declaration:
+# WIP Pirate Class
+#class Pirate(object):
+#
+#	def __init__(self):
+#		self.rect = pygame.Rect(randx, randy, 32, 32)
+
+
 # Class for the orange dude
 class Player(object):
-
-
 	
 	def __init__(self):
+
 		self.rect = pygame.Rect(224, 96, 32, 32)
 
 		self.atPort = False
+		self.atPortA = False
+		self.atPortB = False
 		self.money = 0
 		self.moneyString = ""
 		self.goodsNumber = 0
 		self.goodsNumberString = ""
+
+	VALID_STATES = ['atPort', 'state2', 'state3']
+
+    #States
+
+	def check_state(self, state):
+		if state in Player.VALID_STATES:
+			return self.__state == state
 
 	def move(self, dx, dy):
 		
@@ -180,110 +333,13 @@ for row in level:
     x = 144
 
 #Program Loops
-timeVar = 0 # Amount of time that has passed
-Starting = True # Whether or not to show the splashscreen
 Running = True
 
 
 while Running:
-	while Starting == True:
-		timeVar = timeVar + 1
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				Starting == False
-				Running = False
-		if timeVar == 150:
-			timeVar = 0
-			Starting = False
-			
-		#FPS LABEL
-		fps = Clock.get_fps()
-		fps = round(fps, 2)
-		fpsString = str(fps)
-		fpsLabel = fpsFont.render(fpsString, 20, black)		
-		
-		#Drawing to screen
-		wipeScreenWhite()
-		screen.blit(splash, splashRect)
-		screen.blit(fpsLabel, (10, 10))
-		pygame.display.flip()
-		Clock.tick(50)
+	main_game_loop()
 
-	#Main Loop, if Starting is False
-
-	timeVar = timeVar + 1
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			Running = False
-		elif event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_ESCAPE:
-				Running = False
-
-
-	#Capturing Mouse Position
-	mousePos = pygame.mouse.get_pos()
-	mouseX = mousePos[0]
-	mouseY = mousePos[1]
-
-	#Capturing and Responding to Keys
-	key = pygame.key.get_pressed()
-	if key[pygame.K_LEFT]:
-		player.move(-32, 0)
-	if key[pygame.K_RIGHT]:
-		player.move(32, 0)
-	if key[pygame.K_UP]:
-		player.move(0, -32)
-	if key[pygame.K_DOWN]:
-		player.move(0, 32)
-	
-	#FPS LABEL
-	fps = Clock.get_fps()
-	fps = round(fps, 2)
-	fpsString = str(fps)
-	fpsLabel = fpsFont.render(fpsString, 20, black)	
-
-	if player.atPort == True:
-		player.money = player.money + (10*player.goodsNumber)
-		player.moneyString =  str(player.money)
-		player.goodsNumber = 0
-
-		goodsAvailable = random.randrange(10, 20)
-		print("How many goods would you like to take? The max is: ", goodsAvailable)
-		player.goodsNumber = int(input(">>>"))
-		if player.goodsNumber > goodsAvailable:
-			print("You can only take up to: ", goodsAvailable, ". Pick another number.")
-			player.goodsNumber = int(input(">>>"))
-			print("You have brought ", player.goodsNumber," goods on board.")
-			player.goodsNumberString = str(player.goodsNumber)
-			player.atPort = False
-		else:
-			print("You have brought ", player.goodsNumber," goods on board.")
-			player.goodsNumberString = str(player.goodsNumber)
-			player.atPort = False
-
-	#Goods and Money Labels
-	goodsLabel = goodsFont.render("Goods Carrying:", 20, black)
-	goodsLabelLineTwo = goodsFont.render(player.goodsNumberString, 20, black)
-	moneyLabel = moneyFont.render("Money:", 20, black)
-	moneyLabelLineTwo = moneyFont.render(player.moneyString, 20, black)
-
-
-	#Drawing to Screen
-	wipeScreenWhite()
-	screen.blit(bkg, bkgRect)
-	for block in blocks:
-		pygame.draw.rect(screen, (0, 0, 0), block.rect)
-	for port in ports:
-		pygame.draw.rect(screen, deepBlue, port.rect)
-	pygame.draw.rect(screen, (255, 200, 0), player.rect)
-	screen.blit(goodsLabel, (10, 50))
-	screen.blit(goodsLabelLineTwo, (10, 60))
-	screen.blit(moneyLabel, (10, 30))
-	screen.blit(moneyLabelLineTwo, (10, 40))
-	screen.blit(fpsLabel, (10, 10))
-	pygame.display.flip()
-	Clock.tick(30)
-
+pygame.mixer.quit()
 pygame.font.quit()
 pygame.quit()
 sys.exit()

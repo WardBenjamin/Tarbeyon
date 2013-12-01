@@ -1,0 +1,6 @@
+Game Over needs to be trimmed to remove the "Fail," and become the intro music.
+
+Journey to the East needs to be cut at 1:01 (background music).
+
+
+IMPORTANT: DO NOT FORGET TO CONVERT MUSIC TO .OGG FORMAT EVENTUALLY!
