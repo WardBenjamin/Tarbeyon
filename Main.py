@@ -3,6 +3,9 @@ import sys
 import time
 import random
 
+from player import *
+from block import *
+
 pygame.init()
 pygame.font.init()
 pygame.mixer.init()
@@ -51,11 +54,11 @@ goodsFont = pygame.font.Font(None, 15)
 turnFont = pygame.font.Font(None, 20)
 
 #Images
-bkg = pygame.image.load("f3TAE.png").convert()
+bkg = pygame.image.load("Images\TempBkg.png").convert()
 bkgRect = bkg.get_rect()
 bkgRect.center = screen_center
 
-splash = pygame.image.load("Splash.png").convert()
+splash = pygame.image.load("Images\Splash.png").convert()
 splashRect = splash.get_rect()
 splashRect.center = screen_center
 
@@ -70,6 +73,7 @@ goodsAvailable = 0
 moveAvailable = False
 captureMouse = False
 timeVar = 0
+ending = True
 #VALID_STATES = ['player_turn', 'enemy_turn', 'splashscreen', 'menu', 'paused',]
 state = "splashscreen"
 
@@ -90,10 +94,12 @@ def main_game_loop():
 			if event.type == pygame.QUIT:
 				Running = False
 		if timeVar == 450:
-			timeVar = 0
+			pygame.mixer.quit()
 			state = "player_turn"
+			pygame.mixer.init()
 			captureMouse = True
-
+			timeVar = 0
+			
 		pygame.mouse.set_pos(screen_center)
 		pygame.mouse.set_visible(False)
 			
@@ -118,7 +124,7 @@ def main_game_loop():
 				Running = False
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
-					Running = False
+					state = "ending"
 	
 	
 		#Capturing Mouse Position
@@ -208,6 +214,34 @@ def main_game_loop():
 		pygame.display.flip()
 		Clock.tick(30)
 
+	if state == "ending":
+		print(timeVar)
+		timeVar = 0
+		if ending == True:
+			channel = intro_music_ogg.play()
+			ending == False
+		timeVar = timeVar + 1
+#		for event in pygame.event.get():
+#			if event.type == pygame.QUIT:
+#				Running = False
+		if timeVar == 450:
+			pygame.mixer.quit()
+			pygame.font.quit()
+			pygame.quit()
+			sys.exit()
+			
+		#FPS LABEL
+		fps = Clock.get_fps()
+		fps = round(fps, 2)
+		fpsString = str(fps)
+		fpsLabel = fpsFont.render(fpsString, 20, black)		
+		
+		#Drawing to screen
+		wipeScreenWhite()
+		screen.blit(splash, splashRect)
+		screen.blit(fpsLabel, (10, 10))
+		pygame.display.flip()
+		Clock.tick(50)
 
 #Object Declaration:
 # WIP Pirate Class
@@ -216,88 +250,6 @@ def main_game_loop():
 #	def __init__(self):
 #		self.rect = pygame.Rect(randx, randy, 32, 32)
 
-
-# Class for the orange dude
-class Player(object):
-	
-	def __init__(self):
-
-		self.rect = pygame.Rect(224, 96, 32, 32)
-
-		self.atPort = False
-		self.atPortA = False
-		self.atPortB = False
-		self.money = 0
-		self.moneyString = ""
-		self.goodsNumber = 0
-		self.goodsNumberString = ""
-
-	VALID_STATES = ['atPort', 'state2', 'state3']
-
-    #States
-
-	def check_state(self, state):
-		if state in Player.VALID_STATES:
-			return self.__state == state
-
-	def move(self, dx, dy):
-		
-		# Move each axis separately. Note that this checks for collisions both times.
-		if dx != 0:
-			self.move_single_axis(dx, 0)
-		if dy != 0:
-			self.move_single_axis(0, dy)
-	
-	def move_single_axis(self, dx, dy):
-
-		# Move the rect
-		self.rect.x += dx
-		self.rect.y += dy
-
-
-		for port in ports:
-			if self.rect.colliderect(port.rect):
-				if dx > 0: # Moving right; Hit the left side of a port
-					self.rect.right = port.rect.left
-					self.atPort = True
-				if dx < 0: # Moving left; Hit the right side of a port
-					self.rect.left = port.rect.right
-					self.atPort = True
-				if dy > 0: # Moving down; Hit the top side of a port
-					self.rect.bottom = port.rect.top
-					self.atPort = True
-				if dy < 0: # Moving up; Hit the bottom side of a port
-					self.rect.top = port.rect.bottom
-					self.atPort = True
-
-		# If you collide with a block, move out based on velocity
-		for block in blocks:
-			if self.rect.colliderect(block.rect):
-				if dx > 0: # Moving right; Hit the left side of the block
-					self.rect.right = block.rect.left
-				if dx < 0: # Moving left; Hit the right side of the block
-					self.rect.left = block.rect.right
-				if dy > 0: # Moving down; Hit the top side of the block
-					self.rect.bottom = block.rect.top
-				if dy < 0: # Moving up; Hit the bottom side of the block
-					self.rect.top = block.rect.bottom
-
-class Block(object):
-	
-	def __init__(self, pos):
-		blocks.append(self)
-		self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
-
-
-class Port(Block):
-
-	def __init__(self, pos):
-		ports.append(self)
-		self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
-
-
-blocks = [] # List to hold the blocks
-ports = [] # List to hold the ports
 player = Player() # Create the player
 
 # Holds the level layout in a list of strings.
@@ -338,8 +290,3 @@ Running = True
 
 while Running:
 	main_game_loop()
-
-pygame.mixer.quit()
-pygame.font.quit()
-pygame.quit()
-sys.exit()
