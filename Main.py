@@ -82,6 +82,7 @@ def wipeScreenWhite():
 	screen.fill(white)
 def main_game_loop():
 	global state
+	global Running
 	global timeVar
 	global captureMouse
 
@@ -125,6 +126,7 @@ def main_game_loop():
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					state = "ending"
+					pygame.mixer.quit()
 	
 	
 		#Capturing Mouse Position
@@ -217,18 +219,12 @@ def main_game_loop():
 	if state == "ending":
 		print(timeVar)
 		timeVar = 0
-		if ending == True:
-			channel = intro_music_ogg.play()
-			ending == False
 		timeVar = timeVar + 1
 #		for event in pygame.event.get():
 #			if event.type == pygame.QUIT:
 #				Running = False
-		if timeVar == 450:
-			pygame.mixer.quit()
-			pygame.font.quit()
-			pygame.quit()
-			sys.exit()
+		if timeVar == 200:
+			Running = False
 			
 		#FPS LABEL
 		fps = Clock.get_fps()
@@ -290,3 +286,8 @@ Running = True
 
 while Running:
 	main_game_loop()
+
+pygame.mixer.quit()
+pygame.font.quit()
+pygame.quit()
+sys.exit()
