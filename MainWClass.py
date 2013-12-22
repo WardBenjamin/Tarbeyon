@@ -144,18 +144,22 @@ class Game(object):
 				key = pygame.key.get_pressed()
 				if key[pygame.K_LEFT]:
 					self.player1.speed = (-2, 0)
-				if key[pygame.K_RIGHT]:
+				elif key[pygame.K_RIGHT]:
 					self.player1.speed = (2, 0)
-				if key[pygame.K_UP]:
+				elif key[pygame.K_UP]:
 					self.player1.speed = (0, -2)
-				if key[pygame.K_DOWN]:
+				elif key[pygame.K_DOWN]:
 					self.player1.speed = (0, 2)
+				else:
+					self.player1.speed = (0, 0)
 				
 				#FPS LABEL
 				self.fps = self.clock.get_fps()
 				self.fps = round(self.fps, 2)
 				self.fpsString = str(self.fps)
 				self.fpsLabel = self.fpsFont.render(self.fpsString, 20, self.black)
+
+				self.player1.move()
 
 			else:
 				print("No valid game state set")

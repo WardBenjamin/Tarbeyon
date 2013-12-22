@@ -54,15 +54,15 @@ class Player(Entity):
                     print("Error in Player.updateState")
 
 
-    def move(self, speed):
+    def move(self):
         
         # Move each axis separately. Note that this checks for collisions both times.
-        if speed[0] != 0:
-            self.move_single_axis(speed[0], 0)
-        if speed[1] != 0:
-            self.move_single_axis(0, speed[1])
+        if self.speed[0] != 0:
+            self.move_single_axis()
+        if self.speed[1] != 0:
+            self.move_single_axis()
     
-    def move_single_axis(self, speed):
+    def move_single_axis(self):
         global error
 
         # Move the rect
@@ -73,26 +73,26 @@ class Player(Entity):
         # If you collide with a block, reset the position to the edge of the block
         for block in blocks:
             if self.rect.colliderect(block.rect):
-                if dx > 0: # Moving right; Hit the left side of the block
+                if self.speed[0] > 0: # Moving right; Hit the left side of the block
                     self.rect.right = block.rect.left
-                elif dx < 0: # Moving left; Hit the right side of the block
+                elif self.speed[0] < 0: # Moving left; Hit the right side of the block
                     self.rect.left = block.rect.right
-                elif dy > 0: # Moving down; Hit the top side of the block
+                elif self.speed[1] > 0: # Moving down; Hit the top side of the block
                     self.rect.bottom = block.rect.top
-                elif dy < 0: # Moving up; Hit the bottom side of the block
+                elif self.speed[1] < 0: # Moving up; Hit the bottom side of the block
                     self.rect.top = block.rect.bottom
                 else:
                     error = True
 
         for monster in monsters:
             if self.rect.colliderect(monster.rect):
-                if dx > 0: # Moving right; Hit the left side of the monster
+                if self.speed[0] > 0: # Moving right; Hit the left side of the monster
                     self.rect.right = monster.rect.left
-                elif dx < 0: # Moving left; Hit the right side of the monster
+                elif self.speed[0] < 0: # Moving left; Hit the right side of the monster
                     self.rect.left = monster.rect.right
-                elif dy > 0: # Moving down; Hit the top side of the monster
+                elif self.speed[1] > 0: # Moving down; Hit the top side of the monster
                     self.rect.bottom = monster.rect.top
-                elif dy < 0: # Moving up; Hit the bottom side of the monster
+                elif self.speed[1] < 0: # Moving up; Hit the bottom side of the monster
                     self.rect.top = monster.rect.bottom
                 else:
                     error = True
