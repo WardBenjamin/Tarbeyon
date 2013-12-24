@@ -139,21 +139,28 @@ class Game(object):
 				else:
 					pygame.mouse.set_visible(False)
 					pygame.mouse.set_pos(self.screen_center)
-			
+
+				self.player1.handleMovement()
+
+
+				"""
+				IMPORTANT: Moved to handleMovement() in player
+
 				#Capturing and Responding to Keys
 				key = pygame.key.get_pressed()
 				if key[pygame.K_LEFT]:
 					self.player1.move(-2, 0)
 				if key[pygame.K_RIGHT]:
 					self.player1.move(2, 0)
-				if key[pygame.K_UP] and self.player1.canJump:
-					self.player1.move(0, -4)
-					#self.player1.canJump = False
+				if key[pygame.K_UP]:
+					self.player1.move(0, -2)
 				if key[pygame.K_DOWN]:
 					self.player1.move(0, 2)
 
 				if self.player1.gravity:
 					self.player1.move(0, 2)
+				if key[pygame.K_UP] and self.player1.gravity:
+					self.player1.move(0, -2) """
 				
 				#FPS LABEL
 				self.fps = self.clock.get_fps()

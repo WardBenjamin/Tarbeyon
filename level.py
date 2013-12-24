@@ -7,8 +7,8 @@ from blocks import Block, blocks
 levelMap = [
 "WWWWWWWWWWWWWWWWWWWW",
 "WX                 W",
-"W                  W",
 "WW                 W",
+"W                  W",
 "W                  W",
 "W                  W",
 "W                  W",

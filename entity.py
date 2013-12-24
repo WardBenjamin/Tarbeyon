@@ -75,10 +75,10 @@ class Player(Entity):
         for block in blocks:
             if self.rect.colliderect(block.rect):
                 if dx > 0: # Moving right; Hit the left side of the block
-                    self.rect.right = block.rect.left - 1
+                    self.rect.right = block.rect.left
 
                 elif dx < 0: # Moving left; Hit the right side of the block
-                    self.rect.left = block.rect.right + 1
+                    self.rect.left = block.rect.right
 
 
         for monster in monsters:
@@ -100,15 +100,32 @@ class Player(Entity):
         for block in blocks:
             if self.rect.colliderect(block.rect):
                 if dy > 0: # Moving down; Hit the top side of the block
-                    self.rect.bottom = block.rect.top - 1
+                    self.rect.bottom = block.rect.top
                     self.canJump = True
 
                 elif dy < 0: # Moving up; Hit the bottom side of the block
-                    self.rect.top = block.rect.bottom + 1
+                    self.rect.top = block.rect.bottom
 
         for monster in monsters:
             if self.rect.colliderect(monster.rect):
                 self.health = self.health - monster.damage
+
+    def handleMovement(self):
+        #Capturing and Responding to Keys
+        key = pygame.key.get_pressed()
+        if key[pygame.K_LEFT]:
+            self.move(-2, 0)
+        if key[pygame.K_RIGHT]:
+            self.move(2, 0)
+        if key[pygame.K_UP]:
+            self.move(0, -2)
+        if key[pygame.K_DOWN]:
+            self.move(0, 2)
+
+        if self.gravity:
+            self.move(0, 2)
+        if key[pygame.K_UP] and self.gravity:
+            self.move(0, -2)
 
 
 
