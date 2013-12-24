@@ -1,0 +1,14 @@
+        """for monster in monsters:
+            if self.rect.colliderect(monster.rect):
+                if self.speed[0] > 0: # Moving right; Hit the left side of the monster
+                    self.rect.right = monster.rect.left
+                elif self.speed[0] < 0: # Moving left; Hit the right side of the monster
+                    self.rect.left = monster.rect.right
+                elif self.speed[1] > 0: # Moving down; Hit the top side of the monster
+                    self.rect.bottom = monster.rect.top
+                elif self.speed[1] < 0: # Moving up; Hit the bottom side of the monster
+                    self.rect.top = monster.rect.bottom
+
+        for liquid in liquids:
+            if self.rect.colliderect(liquid.rect):
+                liquid.applyEffects()"""

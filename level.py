@@ -8,7 +8,7 @@ levelMap = [
 "WWWWWWWWWWWWWWWWWWWW",
 "WX                 W",
 "W                  W",
-"W                  W",
+"WW                 W",
 "W                  W",
 "W                  W",
 "W                  W",
