@@ -16,6 +16,11 @@ class Entity(object):
         self.y_pos = pos[1]
         self.health = health
 
+    def checkDeath(self):
+        if self.health <= 0:
+            self.rect = self.originalRect
+            self.health = self.originalHealth
+
 
 class Player(Entity):
 
@@ -137,7 +142,9 @@ class Monster(Entity):
         entities.append(self)
         monsters.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
+        self.originalRect = pygame.Rect(pos[0], pos[1], 32, 32)
         self.health = health
+        self.originalHealth = health
         self.xp = xp
         self.damage = damage
         self.armor = armor

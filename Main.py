@@ -143,6 +143,7 @@ class Game(object):
 
 				for entity in entities:
 					entity.handleMovement()
+					entity.checkDeath()
 				
 				#FPS LABEL
 				self.fps = self.clock.get_fps()
