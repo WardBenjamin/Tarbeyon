@@ -143,19 +143,17 @@ class Game(object):
 
 				for entity in entities:
 					entity.handleMovement()
+				for entity in entities:
 					entity.checkDeath()
-				
+
 				#FPS LABEL
 				self.fps = self.clock.get_fps()
 				self.fps = round(self.fps, 2)
 				self.fpsString = str(self.fps)
 				self.fpsLabel = self.fpsFont.render(self.fpsString, 20, self.black)
 
-				print("X:", self.player1.rect.x, " ", "Y:", self.player1.rect.y, " ", "Health:", self.player1.health, "/", self.player1.originalHealth)
-
-				if self.player1.health <= 0:
-					self.player1.rect = self.player1.originalRect 
-					self.player1.health = self.player1.originalHealth
+				#if self.tickNumber:
+					#print("X:", self.player1.rect.x, " ", "Y:", self.player1.rect.y, " ", "Health:", self.player1.health, "/", self.player1.originalHealth)
 
 			else:
 				print("No valid game state set")

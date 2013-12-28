@@ -15,11 +15,17 @@ class Entity(object):
         self.x_pos = pos[0]
         self.y_pos = pos[1]
         self.health = health
+        self.maxHealth = health
+        self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
+        self.originalRect = pygame.Rect(pos[0], pos[1], 32, 32) 
 
     def checkDeath(self):
         if self.health <= 0:
-            self.rect = self.originalRect
-            self.health = self.originalHealth
+            self.isKilled()
+
+    def isKilled(self):
+        self.rect = self.originalRect
+        self.health = self.maxHealth
 
 
 class Player(Entity):
@@ -31,7 +37,7 @@ class Player(Entity):
         entities.append(self)
         self.x_pos = pos[0]
         self.y_pos = pos[1]
-        self.originalHealth = health
+        self.maxHealth = health
         self.health = health
         self.armor = armor
         self.damage = damage
@@ -90,6 +96,7 @@ class Player(Entity):
         for monster in monsters:
             if self.rect.colliderect(monster.rect):
                 self.health = self.health - monster.damage
+                monster.health = monster.health - self.damage
 
         """for liquid in liquids:
             if self.rect.colliderect(liquid.rect):
@@ -115,6 +122,8 @@ class Player(Entity):
         for monster in monsters:
             if self.rect.colliderect(monster.rect):
                 self.health = self.health - monster.damage
+                monster.health = monster.health - self.damage
+                print("PlayerH:", self.health, "MonsterH:", monster.health)
 
     def handleMovement(self):
         #Capturing and Responding to Keys
@@ -124,14 +133,14 @@ class Player(Entity):
         if key[pygame.K_RIGHT]:
             self.move(2, 0)
         if key[pygame.K_UP]:
-            self.move(0, -2)
+            self.move(0, -6)
         if key[pygame.K_DOWN]:
             self.move(0, 2)
 
         if self.gravity:
-            self.move(0, 2)
+            self.move(0, 6)
         if key[pygame.K_UP] and self.gravity:
-            self.move(0, -2)
+            self.move(0, -6)
 
 
 
@@ -142,9 +151,9 @@ class Monster(Entity):
         entities.append(self)
         monsters.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
-        self.originalRect = pygame.Rect(pos[0], pos[1], 32, 32)
+        self.originalRect = pygame.Rect(pos[0], pos[1], 32, 32) 
         self.health = health
-        self.originalHealth = health
+        self.maxHealth = health
         self.xp = xp
         self.damage = damage
         self.armor = armor
@@ -153,19 +162,20 @@ class Monster(Entity):
         self.gravity = True
 
     def isKilled(self):
-        player.xp += self.xp
+        entities.remove(self)
         monsters.remove(self)
 
     def handleMovement(self):
         #Randomly picking a dirction
-        direction = random.randint(1, 2)
-        if direction == 1:
+        direction = random.randint(1, 10)
+        if direction <= 5:
             self.move(-2, 0)
-        elif direction == 2:
+        elif direction >= 6:
             self.move(2, 0)
+        print(direction)
 
         if self.gravity:
-            self.move(0, 2)
+            self.move(0, 6)
 
     def move(self, dx, dy):
         
@@ -221,18 +231,5 @@ class Monster(Entity):
         
         
 class Square(Monster):
-
-    def __init__(self, pos, health, xp, damage, armor, drops):
-        monsters.append(self)
-        self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
-        self.health = health
-        self.xp = xp
-        self.damage = damage
-        self.armor = armor
-        self.drops = drops
-
-
-    def isKilled(self):
-        player.xp += self.xp
-        monsters.remove(self)
-        print("You have killed a Square.")
+    def deathLog(self):
+        print("Square1 is dead")
