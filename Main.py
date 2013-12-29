@@ -1,5 +1,6 @@
 #Jerks with Swords?
 import pygame
+import os
 import sys
 import random
 
@@ -60,16 +61,16 @@ class Game(object):
 
 	def loadContent(self):
 		#Loading Images
-		self.bkg = pygame.image.load("Images\TempBkg.png").convert()
+		self.bkg = pygame.image.load("Images" + os.sep + "TempBkg.png").convert()
 		self.bkgRect = self.bkg.get_rect()
 		self.bkgRect.center = self.screen_center
 
-		self.splash = pygame.image.load("Images\Splash.png").convert()
+		self.splash = pygame.image.load("Images" + os.sep + "Splash.png").convert()
 		self.splashRect = self.splash.get_rect()
 		self.splashRect.center = self.screen_center
 
 		#Loading Sounds/Music
-		self.intro_music_ogg_file = "Music\IntroMusic.ogg"
+		self.intro_music_ogg_file = "Music" + os.sep + "IntroMusic.ogg"
 		self.intro_music_ogg = pygame.mixer.Sound(self.intro_music_ogg_file)
 
 		#Loading Text Surfaces
