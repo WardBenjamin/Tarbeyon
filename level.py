@@ -4,23 +4,12 @@ from entity import Player
 from blocks import Block, blocks
 
 # Holds the level layout in a list of strings.
-levelMap = [
-"WWWWWWWWWWWWWWWWWWWW",
-"WX                 W",
-"WW                 W",
-"W                  W",
-"W                  W",
-"W                  W",
-"W                  W",
-"W          S       W",
-"W                  W",
-"W                  W",
-"W                  W",
-"W                  W",
-"W                  W",
-"W                  W",
-"WWWWWWWWWWWWWWWWWWWW",
-]
+
+def loadMapFile(filename):
+	lvlfile = open(filename)
+	lvlmap = lvlfile.read().split('\n')
+	lvlfile.close()
+	return lvlmap
 
 class Level(object):
 
@@ -47,5 +36,6 @@ class Level(object):
 			y += 32
 			x = 144
 
+levelMap = loadMapFile("level.map")
 level = Level(levelMap)
 level.parseLevel()
