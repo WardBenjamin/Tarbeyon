@@ -5,9 +5,11 @@ from blocks import Block, blocks
 
 # Holds the level layout in a list of strings.
 
-lvlfile = open("level.map")
-
-levelMap = lvlfile.read().split('\n')
+def loadMapFile(filename):
+	lvlfile = open(filename)
+	lvlmap = lvlfile.read().split('\n')
+	lvlfile.close()
+	return lvlmap
 
 class Level(object):
 
@@ -34,5 +36,6 @@ class Level(object):
 			y += 32
 			x = 144
 
+levelMap = loadMapFile("level.map")
 level = Level(levelMap)
 level.parseLevel()
