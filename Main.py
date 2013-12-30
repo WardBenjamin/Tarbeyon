@@ -13,12 +13,11 @@ class Game(object):
 
 	def __init__(self):
 
+		#Debugging stuff
 		self.debug = True
 		self.debugShown = True
-		if self.debug:
-			self.showFPS = True
-		else:
-			self.showFPS = False
+		self.debugMonsters = True
+		self.showFPS = True
 
 		self.captureMouse = True
 
@@ -194,6 +193,8 @@ class Game(object):
 				pygame.draw.rect(self.screen, self.deepBlue, tile.rect)
 			for monster in monsters:
 				pygame.draw.rect(self.screen, self.fuchsia, monster.rect)
+				if self.debugMonsters:
+					print("A monster has been drawn at:", monster.rect)
 			#Draw the player
 			pygame.draw.rect(self.screen, (255, 200, 0), self.player1.rect)
 
