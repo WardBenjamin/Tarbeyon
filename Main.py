@@ -14,6 +14,7 @@ class Game(object):
 	def __init__(self):
 
 		self.debug = True
+		self.debugShown = True
 		if self.debug:
 			self.showFPS = True
 		else:
@@ -114,7 +115,13 @@ class Game(object):
 				if self.debug != True:
 					pygame.mouse.set_pos(self.screen_center)
 					pygame.mouse.set_visible(False)
-			
+				elif self.debug != True and self.debugShown:
+					print("Debug is False")
+					self.debugShown = False
+				elif self.debug and self.debugShown:			
+					print("Debug is True")
+					self.debugShown = False
+
 				#FPS LABEL
 				self.fps = self.clock.get_fps()
 				self.fps = round(self.fps, 2)
@@ -144,7 +151,6 @@ class Game(object):
 
 				for entity in entities:
 					entity.handleMovement()
-				for entity in entities:
 					entity.checkDeath()
 
 				#FPS LABEL
