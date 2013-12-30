@@ -187,7 +187,7 @@ class Game(object):
 			for tile in tiles:
 				pygame.draw.rect(self.screen, self.deepBlue, tile.rect)
 			for monster in monsters:
-				pygame.draw.rect(self.screen, self.silver, monster.rect)
+				pygame.draw.rect(self.screen, self.fuchsia, monster.rect)
 			#Draw the player
 			pygame.draw.rect(self.screen, (255, 200, 0), self.player1.rect)
 
