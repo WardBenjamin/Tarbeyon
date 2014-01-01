@@ -1,3 +1,4 @@
+import color
 from blocks import *
 
 # Holds the level layout in a list of strings.

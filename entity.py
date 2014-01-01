@@ -48,8 +48,8 @@ class Entity(pygame.sprite.Sprite):
 
     def handleMovement(self):
         #Randomly picking a dirction
-        direction = random.randint(1, 1000)
-        if direction <= 500:
+        direction = random.randint(1, 10000)
+        if direction <= 5000:
             self.move(-2, 0)
         elif direction >= 6:
             self.move(2, 0)
@@ -147,6 +147,10 @@ class Player(Entity):
             if self.rect.colliderect(monster.rect):
                 self.health = self.health - monster.damage
                 monster.health = monster.health - self.damage
+                if dy > 0: # Moving down; Hit the left side of the monster
+                    self.rect.bottom = monster.rect.top
+                elif dy < 0: # Moving up; Hit the right side of the monster
+                    self.rect.top = monster.rect.bottom
 
     def move_x(self, dx):
 
@@ -165,7 +169,10 @@ class Player(Entity):
             if self.rect.colliderect(monster.rect):
                 self.health = self.health - monster.damage
                 monster.health = monster.health - self.damage
-
+                if dx > 0: # Moving right; Hit the left side of the monster
+                    self.rect.right = monster.rect.left
+                elif dx < 0: # Moving left; Hit the right side of the monster
+                    self.rect.left = monster.rect.right
 
 class Monster(Entity):
     def doPersonalInit(self):

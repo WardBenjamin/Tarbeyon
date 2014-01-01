@@ -2,6 +2,7 @@
 import os
 import sys
 
+import color
 import level
 from entity import *
 
