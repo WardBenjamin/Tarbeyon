@@ -1,34 +1,48 @@
 import pygame
 
-blocks = [] # List to hold the blocks
-tiles = [] # List to hold the tiles
-liquids = [] # List to hold the liquid tiles
+import color
+import constant
 
-class Block(object):
-	
-	def __init__(self, pos):
-		blocks.append(self)
-		self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
+class Block(pygame.sprite.Sprite):
 
-class Tile(Block):
+    # Constructor. Pass in the color of the block and it's dimensions
+    def __init__(self, color, pos, width, height):
+        # Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+        self.add(constant.blocks)
 
-	def __init__(self, pos):
-		tiles.append(self)
-		self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
+        # Create an image of the block, and fill it with a color.
+        # Note: This could also be an image loaded from the disk.
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
 
-class Liquid(Block):
+        # Fetch the rectangle object that has the dimensions of the image
+        # Update the position of this object by setting the values of rect.x and rect.y
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
 
-	def __init__(self, pos, liquidType):
-		self.rect = pygame.Rect(pos[0], pos[1], 32, 32)
-		self.type = liquidType
-		self.effects = "none"
-		if self.type == "water":
-			self.effects = "none"
-		elif self.type == "spring":
-			self.effects = "regen"
-		elif self.type == "lava":
-			self.effects = "fireDamage"
-		else:
-			self.effects = "none"
-	def applyEffects(self, player):
-		player.effects.append(self.effects)
+        # Test
+        print("Block Created")
+
+class Tile(pygame.sprite.Sprite):
+
+    # Constructor. Pass in the color of the block and it's dimensions
+    def __init__(self, color, pos, width, height):
+        # Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+        self.add(constant.tiles)
+
+        # Create an image of the block, and fill it with a color.
+        # Note: This could also be an image loaded from the disk.
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
+
+        # Fetch the rectangle object that has the dimensions of the image
+        # Update the position of this object by setting the values of rect.x and rect.y
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+        # Test
+        print("Tile Created")

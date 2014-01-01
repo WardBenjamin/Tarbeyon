@@ -1,7 +1,8 @@
 import pygame
 
-from entity import Player
-from blocks import Block, blocks
+import color
+
+from blocks import *
 
 # Holds the level layout in a list of strings.
 
@@ -23,19 +24,18 @@ class Level(object):
 		for row in self.levelMap:
 			for col in row:
 				if col == "W":
-					Block((x, y))
-				if col == "X":
+					Block(color.black, (x, y), 16, 16)
+				elif col == "X":
 					self.player1pos = (x, y)
-				if col == "S" and self.squareNum == 1:
+				elif col == "S" and self.squareNum == 1:
 					self.square1pos = (x, y)
 					self.squareNum = 2
-				if col == "S" and self.squareNum == 2:
+				elif col == "S" and self.squareNum == 2:
 					self.square2pos = (x, y)
 					self.squareNum = 3
-				x += 32
-			y += 32
+				Tile(color.white, (x, y), 16, 16)
+				x += 16
+			y += 16
 			x = 144
 
 levelMap = loadMapFile("level.map")
-level = Level(levelMap)
-level.parseLevel()

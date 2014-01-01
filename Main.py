@@ -4,9 +4,12 @@ import os
 import sys
 import random
 
+import color
+import level
+import constant
+from blocks import Block, Tile
 from entity import *
-from blocks import *
-from level import *
+
 
 #Game Class
 class Game(object):
@@ -24,10 +27,29 @@ class Game(object):
 		pygame.init()
 		pygame.font.init()
 		pygame.mixer.init()
+		self.constructScreen() # Init the screen
+		self.loadContent() # Load the images and sounds
+		self.buildMap() # Build the map
 
-		#Initialize the screen:
+		self.clock = pygame.time.Clock()
+		self.tickNumber = 0
+
+		self.Running = True
+		if self.debug:
+			self.state = "player_turn"
+			print("Debug is enabled! Beware, strangers")
+		else:
+			self.intromusicplay = True
+			self.state = "splashscreen"
+
+	def constructScreen(self):
+
+		# Make the screen centered
+		os.environ["SDL_VIDEO_CENTERED"] = "1"
+
+		# Initialize the screen:
 		self.screenX = 928
-		self.screenY = 480
+		self.screenY = 510
 
 		self.screenX_center = self.screenX/2
 		self.screenY_center = self.screenY/2
@@ -38,26 +60,14 @@ class Game(object):
 		self.screen = pygame.display.set_mode(self.screenSize)
 		pygame.display.set_caption("Tarbeyon - Xeo Games")
 
-		#Load the images and sounds
-		self.loadContent()
-		#Load the colors
-		self.loadColors()
 
-		#Load the clock and track the tick number
-		self.clock = pygame.time.Clock()
-		self.tickNumber = 0
+	def buildMap(self):
+		self.level = level.Level(level.levelMap)
+		self.level.parseLevel() # Building the level
 
-		#Initialize the level:
-		level = Level(levelMap)
-		level.parseLevel()
-		self.player1 = Player(level.player1pos, 100, "Player1", 1, 0)
-		self.square1 = Square(level.square1pos, 1, 1, 1, 0, "")
-
-		self.Running = True
-
-		#Setting the state to "splashscreen" - DO THIS LAST!
-		self.intromusicplay = True
-		self.state = "player_turn"
+		# REPLACE THESE WHEN ENTITY IS REFACTORED
+		self.player = Player(color.yellow, 16, 32, self.level.player1pos, 100, "Player1")
+		self.square1 = Square(color.fuchsia, 16, 16, self.level.square1pos, 50, "square1")
 
 	def loadContent(self):
 		#Loading Images
@@ -76,25 +86,6 @@ class Game(object):
 		#Loading Text Surfaces
 		self.fpsFont = pygame.font.Font(None, 15)
 
-	def loadColors(self):
-		self.black = (0, 0, 0)
-		self.white = (255, 255, 255)
-		self.aqua =(  0, 255, 255)
-		self.blue = (0, 0, 255)
-		self.fuchsia = (255, 0, 255)
-		self.gray = (128, 128, 128)
-		self.green = (0, 128, 0)
-		self.lime = (0, 255, 0)
-		self.maroon = (128, 0, 0)
-		self.navyBlue = (0, 0, 128)
-		self.olive = (128, 128, 0)
-		self.purple = (128, 0, 128)
-		self.red = (255, 0, 0)
-		self.silver = (192, 192, 192)
-		self.teal = (0, 128, 128)
-		self.deepBlue = (35, 68, 255)
-		self.yellow = (255, 255, 0)
-
 	def Tick(self):
 
 		if self.tickNumber >= 0:
@@ -105,21 +96,18 @@ class Game(object):
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
 						self.Running = False
+
 				if self.tickNumber == 450:
 					pygame.mixer.quit()
 					self.state = "player_turn"
 					captureMouse = True
 					self.tickNumber = 0
 
-				if self.debug != True:
+				if not self.debug:
 					pygame.mouse.set_pos(self.screen_center)
 					pygame.mouse.set_visible(False)
-				elif self.debug != True and self.debugShown:
-					print("Debug is False")
-					self.debugShown = False
-				elif self.debug and self.debugShown:			
-					print("Debug is True")
-					self.debugShown = False
+				if self.debug and self.debugShown:
+					print("Debug is enabled! Beware, strangers")
 
 				#FPS LABEL
 				self.fps = self.clock.get_fps()
@@ -147,19 +135,15 @@ class Game(object):
 					pygame.mouse.set_visible(False)
 					pygame.mouse.set_pos(self.screen_center)
 
-
-				for entity in entities:
-					entity.handleMovement()
+				for entity in constant.entities:
 					entity.checkDeath()
+					entity.handleMovement()
 
 				#FPS LABEL
 				self.fps = self.clock.get_fps()
 				self.fps = round(self.fps, 2)
 				self.fpsString = str(self.fps)
-				self.fpsLabel = self.fpsFont.render(self.fpsString, 20, self.black)
-
-				#if self.tickNumber:
-					#print("X:", self.player1.rect.x, " ", "Y:", self.player1.rect.y, " ", "Health:", self.player1.health, "/", self.player1.originalHealth)
+				self.fpsLabel = self.fpsFont.render(self.fpsString, 20, color.black)
 
 			else:
 				print("No valid game state set")
@@ -185,18 +169,15 @@ class Game(object):
 			wipeScreenWhite()
 			#Draw the background
 			self.screen.blit(self.bkg, self.bkgRect)
-			#Draw the blocks
-			for block in blocks:
-				pygame.draw.rect(self.screen, (0, 0, 0), block.rect)
 			#Draw the tiles
-			for tile in tiles:
-				pygame.draw.rect(self.screen, self.deepBlue, tile.rect)
-			for monster in monsters:
-				pygame.draw.rect(self.screen, self.fuchsia, monster.rect)
-				if self.debugMonsters:
-					print("A monster has been drawn at:", monster.rect)
+			constant.tiles.draw(self.screen)
+			#Draw the blocks on top of the tiles
+			constant.blocks.draw(self.screen)
+
+			# Draw the monsters
+			constant.monsters.draw(self.screen)
 			#Draw the player
-			pygame.draw.rect(self.screen, (255, 200, 0), self.player1.rect)
+			constant.player.draw(self.screen)
 
 			#Draw the text
 
@@ -205,8 +186,10 @@ class Game(object):
 
 			#Update the screen
 			pygame.display.update()
+
 		else:
 			print("Error in the Draw method")
+
 
 #Misc Defs
 def roundTo32(x, base=32):
@@ -221,7 +204,11 @@ def roundTo16(x, base=16):
 
 
 def wipeScreenWhite():
-	Game.screen.fill(Game.white)
+	Game.screen.fill(color.white)
+
+
+
+
 
 Game = Game()
 
