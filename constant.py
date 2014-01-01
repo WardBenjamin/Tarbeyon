@@ -1,4 +1,5 @@
 import pygame
+
 pygame.init()
 # Creating sprite Groups
 entities = pygame.sprite.Group()

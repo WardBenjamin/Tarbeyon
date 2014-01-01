@@ -1,10 +1,9 @@
 import pygame
 
-import color
 import constant
 
-class Block(pygame.sprite.Sprite):
 
+class Block(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
     def __init__(self, color, pos, width, height):
         # Call the parent class (Sprite) constructor
@@ -25,8 +24,8 @@ class Block(pygame.sprite.Sprite):
         # Test
         print("Block Created")
 
-class Tile(pygame.sprite.Sprite):
 
+class Tile(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
     def __init__(self, color, pos, width, height):
         # Call the parent class (Sprite) constructor
