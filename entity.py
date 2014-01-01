@@ -32,6 +32,8 @@ class Entity(pygame.sprite.Sprite):
         self.damage = 1
         self.armor = 0
 
+        self.directionPicked = False
+
         self.doPersonalInit()
 
 
@@ -47,12 +49,32 @@ class Entity(pygame.sprite.Sprite):
             pygame.sprite.Sprite.kill()
 
     def handleMovement(self):
-        #Randomly picking a dirction
-        direction = random.randint(1, 10000)
-        if direction <= 5000:
+
+        if not self.directionPicked:
+            self.direction = random.randint(1, 100) ##Randomly picking a direction
+            self.moveNumber = 60
+            self.moveIntervel = random.randint(30, 55)
+
+        if self.direction > 50 and self.moveNumber > self.moveIntervel:
             self.move(-2, 0)
-        elif direction >= 6:
+            self.directionPicked = True
+            self.direction = 51
+            self.moveNumber -= 1
+
+        elif self.direction <= 50 and self.moveNumber > self.moveIntervel:
             self.move(2, 0)
+            self.directionPicked = True
+            self.direction = 49
+            self.moveNumber -= 1
+
+        elif self.moveNumber <= self.moveIntervel and self.moveNumber > 0:
+            self.moveNumber -= 1
+
+        elif self.moveNumber <= 0:
+            self.directionPicked = False
+
+        print(self.moveNumber)
+
         if self.gravity:
             self.move(0, 6)
 
