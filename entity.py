@@ -51,17 +51,17 @@ class Entity(pygame.sprite.Sprite):
     def handleMovement(self):
 
         if not self.directionPicked:
-            self.direction = random.randint(1, 100) ##Randomly picking a direction
-            self.moveNumber = 60
-            self.moveIntervel = random.randint(30, 55)
+            self.direction = random.randint(1, 100) #Randomly picking a direction
+            self.moveNumber = 60 # Total Number of frames for one movement action
+            self.moveInterval = random.randint(30, 55) # Number of frames to wait between moving
 
-        if self.direction > 50 and self.moveNumber > self.moveIntervel:
+        if self.direction > 50 and self.moveNumber > self.moveInterval:
             self.move(-2, 0)
             self.directionPicked = True
             self.direction = 51
             self.moveNumber -= 1
 
-        elif self.direction <= 50 and self.moveNumber > self.moveIntervel:
+        elif self.direction <= 50 and self.moveNumber > self.moveInterval:
             self.move(2, 0)
             self.directionPicked = True
             self.direction = 49
