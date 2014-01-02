@@ -1,4 +1,4 @@
-import color
+from color import *
 from blocks import *
 
 # Holds the level layout in a list of strings.
@@ -21,7 +21,7 @@ class Level(object):
         for row in self.levelMap:
             for col in row:
                 if col == "W":
-                    Block(color.black, (x, y), 16, 16)
+                    Block(colors["black"], (x, y), 16, 16)
                 elif col == "X":
                     self.player1pos = (x, y)
                 elif col == "S" and self.squareNum == 1:
@@ -30,7 +30,7 @@ class Level(object):
                 elif col == "S" and self.squareNum == 2:
                     self.square2pos = (x, y)
                     self.squareNum = 3
-                Tile(color.white, (x, y), 16, 16)
+                Tile(colors["white"], (x, y), 16, 16)
                 x += 16
             y += 16
             x = 144
