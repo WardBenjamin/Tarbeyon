@@ -2,7 +2,7 @@
 import os
 import sys
 
-import color
+from color import *
 import level
 from entity import *
 
@@ -62,8 +62,8 @@ class Game(object):
         self.level.parseLevel() # Building the level
 
         # REPLACE THESE WHEN ENTITY IS REFACTORED
-        self.player = Player(color.yellow, 16, 32, self.level.player1pos, 100, "Player1")
-        self.square1 = Square(color.fuchsia, 16, 16, self.level.square1pos, 50, "square1")
+        self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "Player1")
+        self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1")
 
     def loadContent(self):
         #Loading Images
@@ -139,7 +139,7 @@ class Game(object):
                 self.fps = self.clock.get_fps()
                 self.fps = round(self.fps, 2)
                 self.fpsString = str(self.fps)
-                self.fpsLabel = self.fpsFont.render(self.fpsString, 20, color.black)
+                self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
 
             else:
                 print("No valid game state set")
@@ -202,7 +202,7 @@ def roundTo16(x, base=16):
 
 
 def wipeScreenWhite():
-    Game.screen.fill(color.white)
+    Game.screen.fill(colors["white"])
 
 
 Game = Game()
