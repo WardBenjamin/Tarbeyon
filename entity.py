@@ -4,6 +4,11 @@ import pygame
 
 import constant
 
+class velocity(object):
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+
 
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
@@ -24,7 +29,9 @@ class Entity(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
-        self.gravity = True
+        self.velocity = velocity()
+        self.onGround = True
+        self.gravity = 1
 
         self.name = name
         self.maxHealth = maxHealth
@@ -56,68 +63,79 @@ class Entity(pygame.sprite.Sprite):
             self.moveInterval = random.randint(30, 55) # Number of frames to wait between moving
 
         if self.direction > 50 and self.moveNumber > self.moveInterval:
-            self.move(-2, 0)
+            self.velocity.x = -2
             self.directionPicked = True
             self.direction = 51
             self.moveNumber -= 1
 
         elif self.direction <= 50 and self.moveNumber > self.moveInterval:
-            self.move(2, 0)
+            self.velocity.x = 2
             self.directionPicked = True
             self.direction = 49
             self.moveNumber -= 1
 
-        elif self.moveNumber <= self.moveIntervel and self.moveNumber > 0:
+        elif self.moveNumber <= self.moveInterval and self.moveNumber > 0:
             self.moveNumber -= 1
 
         elif self.moveNumber <= 0:
             self.directionPicked = False
 
-        print(self.moveNumber)
 
-        if self.gravity:
-            self.move(0, 6)
+    def Update(self):
 
-    def move(self, dx, dy):
-        # Move each axis separately. Note that this checks for collisions both times.
-        if dx != 0:
-            self.move_x(dx)
-        if dy != 0:
-            self.move_y(dy)
+        self.velocity.y += self.gravity
+        self.rect.y += self.velocity.y
 
-    def move_x(self, dx):
-
-        # Move the rect
-        self.rect.x += dx
-
-        # If you collide with a block, reset the position to the edge of the block
         for block in constant.blocks:
             if self.rect.colliderect(block.rect):
-                if dx > 0: # Moving right; Hit the left side of the block
-                    self.rect.right = block.rect.left
-                elif dx < 0: # Moving left; Hit the right side of the block
-                    self.rect.left = block.rect.right
-
-
-    def move_y(self, dy):
-
-        # Move the rect
-        self.rect.y += dy
-
-        # If you collide with a block, reset the position to the edge of the block
-        for block in constant.blocks:
-            if self.rect.colliderect(block.rect):
-                if dy > 0: # Moving down; Hit the left side of the block
+                if self.velocity.y > 0: # Moving down; Hit the top side of the block
                     self.rect.bottom = block.rect.top
-                elif dy < 0: # Moving up; Hit the right side of the block
+                    self.velocity.y = 0
+                    self.onGround = True
+                elif self.velocity.y < 0: # Moving up; Hit the bottom side of the block
                     self.rect.top = block.rect.bottom
+                    self.velocity.y = 0
+
+        for monster in constant.monsters: # Hit a monster
+            if self.rect.colliderect(monster.rect):
+                self.health = self.health - monster.damage
+                monster.health = monster.health - self.damage
+                if self.velocity.y > 0: # Moving down; Hit the top side of the monster
+                    self.rect.bottom = monster.rect.top
+                    self.velocity.y = 0
+                    self.onGround = True
+                elif self.velocity.y < 0: # Moving up; Hit the bottom side of the monster
+                    self.rect.top = monster.rect.bottom
+                    self.velocity.y = 0
+
+        self.rect.x += self.velocity.x
+
+        for block in constant.blocks:
+            if self.rect.colliderect(block.rect):
+                if self.velocity.x > 0: # Moving right; Hit the left side of the block
+                    self.rect.right = block.rect.left
+                    self.velocity.x = 0
+                elif self.velocity.x < 0: # Moving left; Hit the right side of the block
+                    self.rect.left = block.rect.right
+                    self.velocity.x = 0
+
+        for monster in constant.monsters: # Hit a monster
+            if self.rect.colliderect(monster.rect):
+                self.health = self.health - monster.damage
+                monster.health = monster.health - self.damage
+                if self.velocity.x > 0: # Moving right; Hit the left side of the monster
+                    self.rect.right = monster.rect.left
+                    self.velocity.x = 0
+                elif self.velocity.x < 0: # Moving left; Hit the right side of the monster
+                    self.rect.left = monster.rect.right
+                    self.velocity.x = 0
 
 
 class Player(Entity):
     def doPersonalInit(self):
         self.add(constant.player)
         self.xp = 0
-        self.gravity = True
+        self.gravity = 1
         self.canJump = True
 
         self.effects = []
@@ -134,67 +152,75 @@ class Player(Entity):
                 else:
                     print("Error in Player.updateState")
 
+    def StartJump(self):
+        if self.onGround:
+            self.velocity.y = -12
+            self.onGround = False
+
+    def EndJump(self):
+        if self.velocity.y < -6:
+            self.velocity.y = -6
 
     def handleMovement(self):
-        #Capturing and Responding to Keys
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
-            self.move(-2, 0)
+            self.velocity.x = -2
         if key[pygame.K_RIGHT]:
-            self.move(2, 0)
-        if key[pygame.K_UP]:
-            self.move(0, -6)
-        if key[pygame.K_DOWN]:
-            self.move(0, 2)
+            self.velocity.x = 2
+        if key[pygame.K_UP] and self.onGround:
+            self.StartJump()
 
-        if self.gravity:
-            self.move(0, 6)
-        if key[pygame.K_UP] and self.gravity:
-            self.move(0, -6)
+        if not key[pygame.K_LEFT] and not key[pygame.K_RIGHT]:
+            self.velocity.x = 0
 
-    def move_y(self, dy):
+    def Update(self):
 
-        # Move the rect
-        self.rect.y += dy
+        self.velocity.y += self.gravity
+        self.rect.y += self.velocity.y
 
-        # If you collide with a block, reset the position to the edge of the block
         for block in constant.blocks:
             if self.rect.colliderect(block.rect):
-                if dy > 0: # Moving down; Hit the left side of the block
+                if self.velocity.y > 0: # Moving down; Hit the top side of the block
                     self.rect.bottom = block.rect.top
-                elif dy < 0: # Moving up; Hit the right side of the block
+                    self.velocity.y = 0
+                    self.onGround = True
+                elif self.velocity.y < 0: # Moving up; Hit the bottom side of the block
                     self.rect.top = block.rect.bottom
+                    self.velocity.y = 0
 
         for monster in constant.monsters: # Hit a monster
             if self.rect.colliderect(monster.rect):
                 self.health = self.health - monster.damage
                 monster.health = monster.health - self.damage
-                if dy > 0: # Moving down; Hit the left side of the monster
+                if self.velocity.y > 0: # Moving down; Hit the top side of the monster
                     self.rect.bottom = monster.rect.top
-                elif dy < 0: # Moving up; Hit the right side of the monster
+                    self.velocity.y = 0
+                    self.onGround = True
+                elif self.velocity.y < 0: # Moving up; Hit the bottom side of the monster
                     self.rect.top = monster.rect.bottom
+                    self.velocity.y = 0
 
-    def move_x(self, dx):
+        self.rect.x += self.velocity.x
 
-        # Move the rect
-        self.rect.x += dx
-
-        # If you collide with a block, reset the position to the edge of the block
         for block in constant.blocks:
             if self.rect.colliderect(block.rect):
-                if dx > 0: # Moving right; Hit the left side of the block
+                if self.velocity.x > 0: # Moving right; Hit the left side of the block
                     self.rect.right = block.rect.left
-                elif dx < 0: # Moving left; Hit the right side of the block
+                    self.velocity.x = 0
+                elif self.velocity.x < 0: # Moving left; Hit the right side of the block
                     self.rect.left = block.rect.right
+                    self.velocity.x = 0
 
         for monster in constant.monsters: # Hit a monster
             if self.rect.colliderect(monster.rect):
                 self.health = self.health - monster.damage
                 monster.health = monster.health - self.damage
-                if dx > 0: # Moving right; Hit the left side of the monster
+                if self.velocity.x > 0: # Moving right; Hit the left side of the monster
                     self.rect.right = monster.rect.left
-                elif dx < 0: # Moving left; Hit the right side of the monster
+                    self.velocity.x = 0
+                elif self.velocity.x < 0: # Moving left; Hit the right side of the monster
                     self.rect.left = monster.rect.right
+                    self.velocity.x = 0
 
 class Monster(Entity):
     def doPersonalInit(self):

@@ -62,7 +62,7 @@ class Game(object):
         self.level.parseLevel() # Building the level
 
         # REPLACE THESE WHEN ENTITY IS REFACTORED
-        self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "Player1")
+        self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "player")
         self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1")
 
     def loadContent(self):
@@ -134,6 +134,8 @@ class Game(object):
                 for entity in constant.entities:
                     entity.checkDeath()
                     entity.handleMovement()
+                    entity.Update()
+                    entity.checkDeath()
 
                 #FPS LABEL
                 self.fps = self.clock.get_fps()
