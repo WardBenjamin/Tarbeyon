@@ -154,7 +154,7 @@ class Player(Entity):
 
     def StartJump(self):
         if self.onGround:
-            self.velocity.y = -12
+            self.velocity.y = -16
             self.onGround = False
 
     def EndJump(self):
@@ -174,6 +174,9 @@ class Player(Entity):
             self.velocity.x = 0
 
     def Update(self):
+
+        if self.velocity.y > 20:
+            self.velocity.y = 20
 
         self.velocity.y += self.gravity
         self.rect.y += self.velocity.y

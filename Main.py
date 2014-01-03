@@ -63,7 +63,7 @@ class Game(object):
 
         # REPLACE THESE WHEN ENTITY IS REFACTORED
         self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "player")
-        self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1")
+        #self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1")
 
     def loadContent(self):
         #Loading Images
