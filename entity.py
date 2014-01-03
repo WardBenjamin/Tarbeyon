@@ -96,17 +96,6 @@ class Entity(pygame.sprite.Sprite):
                     self.rect.top = block.rect.bottom
                     self.velocity.y = 0
 
-        for monster in constant.monsters: # Hit a monster
-            if self.rect.colliderect(monster.rect):
-                self.health = self.health - monster.damage
-                monster.health = monster.health - self.damage
-                if self.velocity.y > 0: # Moving down; Hit the top side of the monster
-                    self.rect.bottom = monster.rect.top
-                    self.velocity.y = 0
-                    self.onGround = True
-                elif self.velocity.y < 0: # Moving up; Hit the bottom side of the monster
-                    self.rect.top = monster.rect.bottom
-                    self.velocity.y = 0
 
         self.rect.x += self.velocity.x
 
@@ -118,18 +107,6 @@ class Entity(pygame.sprite.Sprite):
                 elif self.velocity.x < 0: # Moving left; Hit the right side of the block
                     self.rect.left = block.rect.right
                     self.velocity.x = 0
-
-        for monster in constant.monsters: # Hit a monster
-            if self.rect.colliderect(monster.rect):
-                self.health = self.health - monster.damage
-                monster.health = monster.health - self.damage
-                if self.velocity.x > 0: # Moving right; Hit the left side of the monster
-                    self.rect.right = monster.rect.left
-                    self.velocity.x = 0
-                elif self.velocity.x < 0: # Moving left; Hit the right side of the monster
-                    self.rect.left = monster.rect.right
-                    self.velocity.x = 0
-
 
 class Player(Entity):
     def doPersonalInit(self):
