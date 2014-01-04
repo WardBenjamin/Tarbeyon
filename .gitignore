@@ -1,2 +1,4 @@
 *.pyc
 __pycache__/*
+Images/char
+Images/Capture.png
