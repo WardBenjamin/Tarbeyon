@@ -23,12 +23,18 @@ class Game(object):
         pygame.init()
         pygame.font.init()
         pygame.mixer.init()
+
+        self.icon = pygame.image.load("Images" + os.sep + "icon.png")
+
         self.constructScreen() # Init the screen
         self.loadContent() # Load the images and sounds
+
         self.buildMap() # Build the map
 
         self.clock = pygame.time.Clock()
         self.tickNumber = 0
+
+        self.icon = pygame.image.load("Images" + os.sep + "Icon.png")
 
         self.Running = True
         if self.debug:
@@ -52,8 +58,9 @@ class Game(object):
         self.screen_center = (self.screenX_center, self.screenY_center)
 
         self.screenSize = self.screenX, self.screenY
-
         self.screen = pygame.display.set_mode(self.screenSize)
+        pygame.display.set_icon(self.icon)
+
         pygame.display.set_caption("Tarbeyon - Xeo Games")
 
 
@@ -110,7 +117,7 @@ class Game(object):
                 self.fps = round(self.fps, 2)
                 self.fpsString = str(self.fps)
                 self.fpsLabel = self.fpsFont.render(self.fpsString, 20, self.black)
-
+                
             elif self.state == "player_turn":
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:

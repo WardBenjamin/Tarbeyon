@@ -114,6 +114,8 @@ class Player(Entity):
         self.xp = 0
         self.gravity = 1
         self.canJump = True
+        self.ableToDJ = True
+        self.doubleJump = True
 
         self.effects = []
         self.validEffects = ["none", "regen", "fireTick"]
@@ -130,22 +132,31 @@ class Player(Entity):
                     print("Error in Player.updateState")
 
     def StartJump(self):
-        if self.onGround:
-            self.velocity.y = -16
-            self.onGround = False
+        self.velocity.y = -16
+        self.onGround = False
+        if self.ableToDJ:
+            self.doubleJump = True
+            print("dj True")
+        else:
+            self.doubleJump = False
+            print("dj False")
 
-    def EndJump(self):
-        if self.velocity.y < -6:
-            self.velocity.y = -6
+    def DoubleJump(self):
+        print("dj Called")
+        self.velocity.y = -16
+        self.doubleJump = False
 
     def handleMovement(self):
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
-            self.velocity.x = -2
+            self.velocity.x = -3
         if key[pygame.K_RIGHT]:
-            self.velocity.x = 2
+            self.velocity.x = 3
+        if key[pygame.K_UP] and not self.onGround and self.doubleJump and self.velocity.y >= -2:
+            self.DoubleJump()
         if key[pygame.K_UP] and self.onGround:
             self.StartJump()
+
 
         if not key[pygame.K_LEFT] and not key[pygame.K_RIGHT]:
             self.velocity.x = 0
