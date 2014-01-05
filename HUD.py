@@ -8,11 +8,13 @@ import constant
 class HUD(object):
     def __init__(self):
         self.Health = Health()
+        print("HUD INIT")
 
 class Health(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.HUDcomponents)
+        print("HEALTH INIT")
 
         self.images = {
             "100"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "full_health_100.png"),

@@ -147,6 +147,7 @@ class Game(object):
 
                 for component in constant.HUDcomponents:
                     component.update()
+                    print("HUD UPDATE")
 
                 #FPS LABEL
                 self.fps = self.clock.get_fps()
