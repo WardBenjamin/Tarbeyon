@@ -1,6 +1,5 @@
-import random
-
 import pygame
+import random
 
 import constant
 
@@ -8,7 +7,6 @@ class velocity(object):
     def __init__(self):
         self.x = 0
         self.y = 0
-
 
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
@@ -41,21 +39,21 @@ class Entity(pygame.sprite.Sprite):
 
         self.directionPicked = False
 
-        self.doPersonalInit()
+        self.do_personal_init()
 
 
         # Test
         print(self.name, "was created")
 
-    def doPersonalInit(self):
+    def do_personal_init(self):
         print("This is just a method to overwrite!")
 
 
-    def checkDeath(self):
+    def check_death(self):
         if self.health <= 0:
             pygame.sprite.Sprite.kill()
 
-    def handleMovement(self):
+    def handle_movement(self):
 
         if not self.directionPicked:
             self.direction = random.randint(1, 100) #Randomly picking a direction
@@ -81,7 +79,7 @@ class Entity(pygame.sprite.Sprite):
             self.directionPicked = False
 
 
-    def Update(self):
+    def update(self):
 
         self.velocity.y += self.gravity
         self.rect.y += self.velocity.y
@@ -109,7 +107,7 @@ class Entity(pygame.sprite.Sprite):
                     self.velocity.x = 0
 
 class Player(Entity):
-    def doPersonalInit(self):
+    def do_personal_init(self):
         self.add(constant.player)
         self.xp = 0
         self.gravity = 1
@@ -131,37 +129,36 @@ class Player(Entity):
                 else:
                     print("Error in Player.updateState")
 
-    def StartJump(self):
+    def start_jump(self):
         self.velocity.y = -16
         self.onGround = False
         if self.ableToDJ:
             self.doubleJump = True
-            print("dj True")
         else:
             self.doubleJump = False
-            print("dj False")
 
-    def DoubleJump(self):
-        print("dj Called")
+    def double_jump(self):
         self.velocity.y = -16
         self.doubleJump = False
 
-    def handleMovement(self):
+    def handle_movement(self):
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
             self.velocity.x = -3
         if key[pygame.K_RIGHT]:
             self.velocity.x = 3
         if key[pygame.K_UP] and not self.onGround and self.doubleJump and self.velocity.y >= -2:
-            self.DoubleJump()
+            self.double_jump()
         if key[pygame.K_UP] and self.onGround:
-            self.StartJump()
+            self.start_jump()
 
 
         if not key[pygame.K_LEFT] and not key[pygame.K_RIGHT]:
             self.velocity.x = 0
 
-    def Update(self):
+    def update(self):
+
+        print(self.health)
 
         if self.velocity.y > 20:
             self.velocity.y = 20
@@ -214,21 +211,22 @@ class Player(Entity):
                     self.velocity.x = 0
 
 class Monster(Entity):
-    def doPersonalInit(self):
+    def do_personal_init(self):
         self.add(constant.monsters)
         self.drops = ""
+        self.damage = 1
 
-    def checkDeath(self):
+    def check_death(self):
         if self.health <= 0:
             self.kill()
             for player in constant.player:
                 player.xp += 1
-            self.deathLog()
+            self.print_death_log()
 
-    def deathLog(self):
+    def print_death_log(self):
         print("This is just a method to overwrite!")
 
 
 class Square(Monster):
-    def deathLog(self):
+    def print_death_log(self):
         print(self.name, "is dead")

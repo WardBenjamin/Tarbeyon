@@ -5,6 +5,7 @@ import sys
 from color import *
 import level
 from entity import *
+from HUD import HUD
 
 
 
@@ -68,9 +69,10 @@ class Game(object):
         self.level = level.Level(level.levelMap)
         self.level.parseLevel() # Building the level
 
-        # REPLACE THESE WHEN ENTITY IS REFACTORED
         self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "player")
         self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1")
+
+        self.HUD = HUD()
 
     def loadContent(self):
         #Loading Images
@@ -139,9 +141,12 @@ class Game(object):
                     pygame.mouse.set_pos(self.screen_center)
 
                 for entity in constant.entities:
-                    entity.handleMovement()
-                    entity.Update()
-                    entity.checkDeath()
+                    entity.handle_movement()
+                    entity.update()
+                    entity.check_death()
+
+                for component in constant.HUDcomponents:
+                    component.update()
 
                 #FPS LABEL
                 self.fps = self.clock.get_fps()
@@ -180,8 +185,11 @@ class Game(object):
 
             # Draw the monsters
             constant.monsters.draw(self.screen)
-            #Draw the player
+            # Draw the player
             constant.player.draw(self.screen)
+
+            # Draw the components of the HUD
+            constant.HUDcomponents.draw(self.screen)
 
             #Draw the text
 

@@ -21,10 +21,6 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
-        # Test
-        print("Block Created")
-
-
 class Tile(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
     def __init__(self, color, pos, width, height):
@@ -42,6 +38,3 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
-
-        # Test
-        print("Tile Created")

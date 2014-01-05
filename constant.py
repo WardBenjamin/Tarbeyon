@@ -7,3 +7,5 @@ player = pygame.sprite.Group()
 monsters = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
 tiles = pygame.sprite.Group()
+
+HUDcomponents = pygame.sprite.Group()
