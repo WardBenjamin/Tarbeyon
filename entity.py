@@ -116,6 +116,8 @@ class Player(Entity):
         self.canJump = True
         self.ableToDJ = True
         self.doubleJump = True
+        self.hitTimer = 8
+        self.maxHitTimer = self.hitTimer
 
         self.effects = []
         self.validEffects = ["none", "regen", "fireTick"]
@@ -180,7 +182,8 @@ class Player(Entity):
 
         for monster in constant.monsters: # Hit a monster
             if self.rect.colliderect(monster.rect):
-                self.health = self.health - monster.damage
+                if self.hitTimer <= 0:
+                    self.health = self.health - monster.damage
                 monster.health = monster.health - self.damage
                 if self.velocity.y > 0: # Moving down; Hit the top side of the monster
                     self.rect.bottom = monster.rect.top
@@ -203,7 +206,8 @@ class Player(Entity):
 
         for monster in constant.monsters: # Hit a monster
             if self.rect.colliderect(monster.rect):
-                self.health = self.health - monster.damage
+                if self.hitTimer <= 0:
+                    self.health = self.health - monster.damage
                 monster.health = monster.health - self.damage
                 if self.velocity.x > 0: # Moving right; Hit the left side of the monster
                     self.rect.right = monster.rect.left
@@ -211,6 +215,11 @@ class Player(Entity):
                 elif self.velocity.x < 0: # Moving left; Hit the right side of the monster
                     self.rect.left = monster.rect.right
                     self.velocity.x = 0
+
+        if self.hitTimer > 0:
+            self.hitTimer -= 1
+        else:
+            self.hitTimer = self.maxHitTimer
 
         self.HUD.update()
 
