@@ -5,7 +5,6 @@ import sys
 from color import *
 import level
 from entity import *
-from HUD import *
 
 
 #Game Class

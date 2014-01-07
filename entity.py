@@ -288,4 +288,4 @@ class Health(pygame.sprite.Sprite):
     def update(self):
         for player in constant.player:
             self.amount = player.health
-        self.check_image()
+        self.image = self.check_image()
