@@ -5,8 +5,7 @@ import sys
 from color import *
 import level
 from entity import *
-from HUD import HUD
-
+from HUD import *
 
 
 #Game Class
@@ -69,10 +68,8 @@ class Game(object):
         self.level = level.Level(level.levelMap)
         self.level.parseLevel() # Building the level
 
-        self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "player")
-        self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1")
-
-        self.HUD = HUD()
+        self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "player", True)
+        self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1", False)
 
     def loadContent(self):
         #Loading Images
@@ -145,10 +142,6 @@ class Game(object):
                     entity.update()
                     entity.check_death()
 
-                for component in constant.HUDcomponents:
-                    component.update()
-                    print("HUD UPDATE")
-
                 #FPS LABEL
                 self.fps = self.clock.get_fps()
                 self.fps = round(self.fps, 2)
@@ -190,7 +183,8 @@ class Game(object):
             constant.player.draw(self.screen)
 
             # Draw the components of the HUD
-            constant.HUDcomponents.draw(self.screen)
+            for player in constant.player:
+                player.HUD.components.draw(self.screen)
 
             #Draw the text
 

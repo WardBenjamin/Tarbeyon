@@ -1,5 +1,4 @@
-import pygame
-import random
+import pygame, random, os, math
 
 import constant
 
@@ -10,7 +9,7 @@ class velocity(object):
 
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, color, width, height, pos, maxHealth, name):
+    def __init__(self, color, width, height, pos, maxHealth, name, isPlayer):
         # Basic Sprite stuff
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
@@ -40,6 +39,9 @@ class Entity(pygame.sprite.Sprite):
         self.directionPicked = False
 
         self.do_personal_init()
+
+        if isPlayer:
+            self.HUD = HUD()
 
 
         # Test
@@ -158,7 +160,7 @@ class Player(Entity):
 
     def update(self):
 
-        print(self.health)
+        print(self.health, "1")
 
         if self.velocity.y > 20:
             self.velocity.y = 20
@@ -210,6 +212,8 @@ class Player(Entity):
                     self.rect.left = monster.rect.right
                     self.velocity.x = 0
 
+        self.HUD.update()
+
 class Monster(Entity):
     def do_personal_init(self):
         self.add(constant.monsters)
@@ -230,3 +234,58 @@ class Monster(Entity):
 class Square(Monster):
     def print_death_log(self):
         print(self.name, "is dead")
+
+#----------------------------------HUD--------------------------------------
+
+class HUD(object):
+    def __init__(self):
+        self.Health = Health()
+        self.components = pygame.sprite.Group()
+        for component in constant.HUDcomponents:
+            component.remove(constant.HUDcomponents)
+            component.add(self.components)
+
+    def update(self):
+        for component in self.components:
+            component.update()
+
+
+class Health(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.add(constant.HUDcomponents)
+        print("HEALTH INIT")
+
+        self.images = {
+            "100"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "full_health_100.png"),
+            "90"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "90_health_100.png"),
+            "80"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "80_health_100.png"),
+            "70"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "70_health_100.png"),
+            "60"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "60_health_100.png"),
+            "50"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "half_health_100.png"),
+            "40"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "40_health_100.png"),
+            "30"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "30_health_100.png"),
+            "20"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "20_health_100.png"),
+            "10"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "10_health_100.png"),
+            "0"      : pygame.image.load("Images" + os.sep + "health" + os.sep + "zero_health_100.png")
+        }
+
+
+        self.maxAmount = 100
+        self.amount = 100
+
+        self.image = self.images["100"]
+        self.rect = self.image.get_rect()
+
+        self.player = next(iter(constant.player))
+
+    def check_image(self):
+        x = str(math.floor(self.amount / 10.0) * 10)
+        y = self.images[x]
+        print(x, "2")
+        return y
+
+    def update(self):
+        for player in constant.player:
+            self.amount = player.health
+        self.check_image()
