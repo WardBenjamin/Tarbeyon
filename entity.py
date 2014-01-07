@@ -162,8 +162,6 @@ class Player(Entity):
 
     def update(self):
 
-        print(self.health, "1")
-
         if self.velocity.y > 20:
             self.velocity.y = 20
 
@@ -263,7 +261,6 @@ class Health(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.HUDcomponents)
-        print("HEALTH INIT")
 
         self.images = {
             "100"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "full_health_100.png"),
@@ -291,7 +288,6 @@ class Health(pygame.sprite.Sprite):
     def check_image(self):
         x = str(math.floor(self.amount / 10.0) * 10)
         y = self.images[x]
-        print(x, "2")
         return y
 
     def update(self):
