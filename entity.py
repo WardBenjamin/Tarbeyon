@@ -26,6 +26,10 @@ class Entity(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
+        self.origin = self.image.get_rect()
+        self.origin.x = pos[0]
+        self.origin.y = pos[1]
+
         self.velocity = velocity()
         self.onGround = True
         self.gravity = 1

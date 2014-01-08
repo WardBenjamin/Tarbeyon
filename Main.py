@@ -137,9 +137,9 @@ class Game(object):
                     pygame.mouse.set_pos(self.screen_center)
 
                 key = pygame.key.get_pressed()
-                if key[pygame.K_SPACE]:
-                    self.player.rect.x = self.screenX_center
-                    self.player.rect.y = self.screenY_center
+                if key[pygame.K_SPACE] and self.debug:
+                    self.player.rect.x = self.player.origin.x
+                    self.player.rect.y = self.player.origin.y
 
                 for entity in constant.entities:
                     entity.handle_movement()
