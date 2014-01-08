@@ -136,6 +136,11 @@ class Game(object):
                     pygame.mouse.set_visible(False)
                     pygame.mouse.set_pos(self.screen_center)
 
+                key = pygame.key.get_pressed()
+                if key[pygame.K_SPACE]:
+                    self.player.rect.x = self.screenX_center
+                    self.player.rect.y = self.screenY_center
+
                 for entity in constant.entities:
                     entity.handle_movement()
                     entity.update()
@@ -148,7 +153,7 @@ class Game(object):
                 self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
 
             else:
-                print("No valid game state set")
+                print(self.state, "is not a valid game state")
 
             self.Draw()
         self.tickNumber += 1
@@ -192,10 +197,6 @@ class Game(object):
 
             #Update the screen
             pygame.display.update()
-
-        else:
-            print("Error in the Draw method")
-
 
 #Misc Defs
 def roundTo32(x, base=32):
