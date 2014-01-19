@@ -2,7 +2,15 @@ from color import *
 from blocks import *
 from entity import Player, Square
 import constant
-from constant import loadMapFile
+
+# Holds the level layout in a list of strings.
+
+def loadMapFile(filename):
+    lvlfile = open(filename)
+    lvlmap = lvlfile.read().split('\n')
+    lvlfile.close()
+    return lvlmap
+
 
 class Level(object):
     def __init__(self, levelMap):
@@ -45,7 +53,7 @@ class Level(object):
             x = 144
 
 
-levelMap = loadMapFile("level.map", True)
+levelMap = loadMapFile("testLevel.map")
 
 
 level = Level(levelMap)

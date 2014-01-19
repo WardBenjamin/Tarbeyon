@@ -1,6 +1,7 @@
 import pygame, random, os, math
 
 import constant
+from constant import loadMapFile
 
 class velocity(object):
     def __init__(self):
@@ -116,13 +117,12 @@ class Player(Entity):
     def do_personal_init(self):
         self.add(constant.player)
         self.xp = 0
-        self.gravity = 1
+        self.gravity = 0.5
         self.canJump = True
         self.ableToDJ = True
         self.doubleJump = True
         self.hitTimer = 8
         self.maxHitTimer = self.hitTimer
-
         self.effects = []
         self.validEffects = ["none", "regen", "fireTick"]
 
@@ -138,7 +138,7 @@ class Player(Entity):
                     print("Error in Player.updateState")
 
     def start_jump(self):
-        self.velocity.y = -16
+        self.velocity.y = -11
         self.onGround = False
         if self.ableToDJ:
             self.doubleJump = True
@@ -146,7 +146,7 @@ class Player(Entity):
             self.doubleJump = False
 
     def double_jump(self):
-        self.velocity.y = -16
+        self.velocity.y = -11
         self.doubleJump = False
 
     def handle_movement(self):
@@ -249,52 +249,109 @@ class Square(Monster):
 #----------------------------------HUD--------------------------------------
 
 class HUD(object):
-    def __init__(self):
-        self.Health = Health()
+    def __init__(self, healthMap="Player" + os.sep + "health.map"):
         self.components = pygame.sprite.Group()
+
+        print("HUD Init")
+
         for component in constant.HUDcomponents:
             component.remove(constant.HUDcomponents)
             component.add(self.components)
+
+        self.healthPath = "Player" + os.sep + "health.map"
+        self.healthMap = loadMapFile(self.healthPath, False)
+        self.health = Health(self.healthMap)
 
     def update(self):
         for component in self.components:
             component.update()
 
+    def draw_components(self, screen):
+        for component in self.components:
+            component.draw_component(screen)
+
 
 class Health(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, healthMap, screenX=928):
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.HUDcomponents)
 
-        self.images = {
-            "100"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "full_health_100.png"),
-            "90"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "90_health_100.png"),
-            "80"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "80_health_100.png"),
-            "70"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "70_health_100.png"),
-            "60"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "60_health_100.png"),
-            "50"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "half_health_100.png"),
-            "40"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "40_health_100.png"),
-            "30"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "30_health_100.png"),
-            "20"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "20_health_100.png"),
-            "10"     : pygame.image.load("Images" + os.sep + "health" + os.sep + "10_health_100.png"),
-            "0"      : pygame.image.load("Images" + os.sep + "health" + os.sep + "zero_health_100.png")
-        }
-
-
-        self.maxAmount = 100
-        self.amount = 100
-
-        self.image = self.images["100"]
-        self.rect = self.image.get_rect()
+        self.healthMap = healthMap # Get the healthMap from the main HUD class 
+        self.hearts = pygame.sprite.Group()
+        self.heart = {}
 
         self.player = next(iter(constant.player))
 
-    def check_image(self):
-        x = str(math.floor(self.amount / 10.0) * 10)
-        y = self.images[x]
-        return y
+        self.heartIterator = 1
+
+        self.parse_health()
 
     def update(self):
-        for player in constant.player:
-            self.amount = player.health
+        for heart in self.hearts:
+            heart.update() # Update each heart
+
+    def draw_component(self, screen):
+        for heart in self.hearts:
+            heart.draw_component(screen)
+
+
+    def parse_health(self): # WIP, Find out how many hearts are needed
+        x = 0
+        y = 0
+        lower_boundary = 0
+        upper_boundary = 10
+        for row in self.healthMap:
+            for col in row:
+                if col == "H":
+                    self.heart[str(self.heartIterator)] = Heart((lower_boundary, upper_boundary), (x, y))
+                    self.heartIterator += 1
+                x += 32
+                lower_boundry = upper_boundary + 1
+                upper_boundary += 10
+            y += 32
+
+class Heart(pygame.sprite.Sprite):
+
+    def __init__(self, boundary, pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.upper_boundary = boundary[1]
+        self.lower_boundary = boundary[0]
+
+        self.images = {
+            "10"   : pygame.image.load("Images" + os.sep + "health" + os.sep + "full.png"),
+            "5"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "half_left.png"),
+            "0"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "empty.png"),
+        }
+
+        self.image = self.images["10"]
+        self.healthAmount = 0
+        self.rect = self.image.get_rect()
+        self.rect.topright = (pos[0], pos[1])
+
+    def check_image(self):
+        if self.lower_boundary <= self.healthAmount < self.upper_boundary:
+            tempAmount = self.healthAmount - self.lower_boundary
+            if tempAmount > 5:
+                self.amount = 5
+            elif tempAmount < 5:
+                self.amount = 0
+            del tempAmount
+        elif amount < self.lower_boundary:
+            self.amount = 0
+        elif amount > self.upper_boundary:
+            self.amount = 10
+
+        x = self.images[str(self.amount)]
+        return x
+
+    def update(self):
+        for health in constant.player:
+            self.healthAmount = player.health
         self.image = self.check_image()
+
+        print("Heart Update")
+
+    def draw_component(self, screen):
+        screen.blit(self.image, self.rect)
+
+        print("Heart Draw")

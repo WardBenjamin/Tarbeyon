@@ -25,10 +25,11 @@ class Game(object):
 
         self.icon = pygame.image.load("Images" + os.sep + "icon.png")
 
-        self.constructScreen() # Init the screen
-        self.loadContent() # Load the images and sounds
+        self.construct_screen() # Init the screen
+        self.load_content() # Load the images and sounds
 
-        self.buildMap() # Build the map
+        self.level = level.level
+        self.build_map() # Build the map
 
         self.clock = pygame.time.Clock()
         self.tickNumber = 0
@@ -43,7 +44,7 @@ class Game(object):
             self.intromusicplay = True
             self.state = "splashscreen"
 
-    def constructScreen(self):
+    def construct_screen(self):
 
         # Make the screen centered
         os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -63,14 +64,11 @@ class Game(object):
         pygame.display.set_caption("Tarbeyon - Xeo Games")
 
 
-    def buildMap(self):
-        self.level = level.Level(level.levelMap)
-        self.level.parseLevel() # Building the level
+    def build_map(self):
+        self.level.parse_level() # Building the level
 
-        self.player = Player(colors["yellow"], 16, 32, self.level.player1pos, 100, "player", True)
-        self.square1 = Square(colors["fuchsia"], 16, 16, self.level.square1pos, 50, "square1", False)
 
-    def loadContent(self):
+    def load_content(self):
         #Loading Images
         self.bkg = pygame.image.load("Images" + os.sep + "TempBkg.png").convert()
         self.bkgRect = self.bkg.get_rect()
@@ -136,20 +134,22 @@ class Game(object):
                     pygame.mouse.set_visible(False)
                     pygame.mouse.set_pos(self.screen_center)
 
-                key = pygame.key.get_pressed()
-                if key[pygame.K_SPACE] and self.debug:
-                    self.player.rect.x = self.player.origin.x
-                    self.player.rect.y = self.player.origin.y
+                for player in constant.player:
+                    key = pygame.key.get_pressed()
+                    if key[pygame.K_SPACE] and self.debug:
+                        player.rect.bottomleft = player.origin.bottomleft
 
                 for entity in constant.entities:
                     entity.handle_movement()
                     entity.update()
                     entity.check_death()
 
+
+
                 #FPS LABEL
                 self.fps = self.clock.get_fps()
-                self.fps = round(self.fps, 2)
-                self.fpsString = str(self.fps)
+                self.fps = round(self.fps)
+                self.fpsString = "FPS:" + str(self.fps)
                 self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
 
             else:
@@ -160,7 +160,7 @@ class Game(object):
 
     def Draw(self):
         if self.state == "splashscreen":
-            wipeScreenWhite()
+            wipeScreenWhite(self.screen)
             self.screen.blit(self.splash, self.splashRect)
             if self.showFPS:
                 self.screen.blit(self.fpsLabel, (10, 10))
@@ -168,18 +168,22 @@ class Game(object):
 
         elif self.state == "menu":
             #Unused
-            wipeScreenWhite()
+            wipeScreenWhite(self.screen)
 
 
         elif self.state == "player_turn":
             #Clear the screen
-            wipeScreenWhite()
+            wipeScreenWhite(self.screen)
             #Draw the background
             self.screen.blit(self.bkg, self.bkgRect)
             #Draw the tiles
             constant.tiles.draw(self.screen)
             #Draw the blocks on top of the tiles
             constant.blocks.draw(self.screen)
+            #Draw the fountains + fountain particles
+            constant.fountains.draw(self.screen)
+            """for fountain in constant.fountains:
+                fountain.draw_particles(self.screen)"""
 
             # Draw the monsters
             constant.monsters.draw(self.screen)
@@ -188,7 +192,7 @@ class Game(object):
 
             # Draw the components of the HUD
             for player in constant.player:
-                player.HUD.components.draw(self.screen)
+                player.HUD.draw_components(self.screen)
 
             #Draw the text
 
@@ -199,28 +203,27 @@ class Game(object):
             pygame.display.update()
 
 #Misc Defs
-def roundTo32(x, base=32):
-    return int(base * round(float(x) / base))
+def roundDownTo32(x, base=32):
+    return int(base * math.floor(float(x) / base))
 
 
 def roundUpTo32(x, base=32):
-    y = int(base * round(float(x) / base))
-    return y
+    return int(base * math.ceil(float(x) / base))
 
 
 def roundTo16(x, base=16):
     return int(base * round(float(x) / base))
 
 
-def wipeScreenWhite():
-    Game.screen.fill(colors["white"])
+def wipeScreenWhite(screen):
+    screen.fill(colors["white"])
 
 
 Game = Game()
 
 while Game.Running:
     Game.Tick()
-    Game.clock.tick(30)
+    Game.clock.tick(40)
 
 pygame.quit()
 sys.exit()
