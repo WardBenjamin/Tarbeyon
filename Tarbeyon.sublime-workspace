@@ -8,10 +8,18 @@
 	"buffers":
 	[
 		{
-			"file": "entity.py",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 10662,
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Benjamin/Desktop/Dropbox/Merit Badge College Prereque's.txt",
+			"settings":
+			{
+				"buffer_size": 3057,
 				"line_ending": "Windows"
 			}
 		},
@@ -19,7 +27,39 @@
 			"file": "Main.py",
 			"settings":
 			{
-				"buffer_size": 7056,
+				"buffer_size": 7069,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "entity.py",
+			"settings":
+			{
+				"buffer_size": 11857,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "level.py",
+			"settings":
+			{
+				"buffer_size": 1769,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "constant.py",
+			"settings":
+			{
+				"buffer_size": 411,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "testEnvironment.py",
+			"settings":
+			{
+				"buffer_size": 2428,
 				"line_ending": "Windows"
 			}
 		}
@@ -48,11 +88,21 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/testLevel.py",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/testLevel.map",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/animation.py",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/blocks.py",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/color.py",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/hudTemp.py",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/inventory.py",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/level.map",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/Player/health.map",
+		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/level.py",
 		"/C/Users/Benjamin/Documents/GitHub/Tarbeyon/ProjectFileForSublimeText.sublime-workspace"
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
@@ -66,6 +116,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"HUD",
+			"boundry"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -83,50 +135,75 @@
 	"groups":
 	[
 		{
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "entity.py",
 					"settings":
 					{
-						"buffer_size": 10662,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10325,
-								10325
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"auto_name": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 4706.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "Main.py",
+					"file": "/C/Users/Benjamin/Desktop/Dropbox/Merit Badge College Prereque's.txt",
 					"settings":
 					{
-						"buffer_size": 7056,
+						"buffer_size": 3057,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1433,
-								1433
+								124,
+								124
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 740.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Main.py",
+					"settings":
+					{
+						"buffer_size": 7069,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6455,
+								6455
 							]
 						],
 						"settings":
@@ -136,7 +213,117 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 793.0,
+						"translation.y": 3765.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "entity.py",
+					"settings":
+					{
+						"buffer_size": 11857,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11738,
+								11738
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5860.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "level.py",
+					"settings":
+					{
+						"buffer_size": 1769,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								865,
+								865
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 540.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "constant.py",
+					"settings":
+					{
+						"buffer_size": 411,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								215,
+								215
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "testEnvironment.py",
+					"settings":
+					{
+						"buffer_size": 2428,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1939,
+								1939
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1225.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -150,7 +337,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 34.0
 	},
 	"layout":
 	{
@@ -177,7 +364,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 118.0
+		"height": 163.0
 	},
 	"replace":
 	{

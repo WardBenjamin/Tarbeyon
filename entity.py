@@ -223,8 +223,6 @@ class Player(Entity):
         else:
             self.hitTimer = self.maxHitTimer
 
-        self.HUD.update()
-
 class Monster(Entity):
     def do_personal_init(self):
         self.add(constant.monsters)
@@ -254,22 +252,21 @@ class HUD(object):
 
         print("HUD Init")
 
-        for component in constant.HUDcomponents:
-            component.remove(constant.HUDcomponents)
-            component.add(self.components)
-
         self.healthPath = "Player" + os.sep + "health.map"
         self.healthMap = loadMapFile(self.healthPath, False)
         self.health = Health(self.healthMap)
 
-    def update(self):
+        for component in constant.HUDcomponents:
+            component.remove(constant.HUDcomponents)
+            component.add(self.components)
+
+    def update_components(self):
         for component in self.components:
             component.update()
 
     def draw_components(self, screen):
         for component in self.components:
-            component.draw_component(screen)
-
+            component.draw(screen)
 
 class Health(pygame.sprite.Sprite):
     def __init__(self, healthMap, screenX=928):
@@ -290,10 +287,9 @@ class Health(pygame.sprite.Sprite):
         for heart in self.hearts:
             heart.update() # Update each heart
 
-    def draw_component(self, screen):
+    def draw(self, screen):
         for heart in self.hearts:
-            heart.draw_component(screen)
-
+            heart.draw(screen)
 
     def parse_health(self): # WIP, Find out how many hearts are needed
         x = 0
@@ -303,7 +299,7 @@ class Health(pygame.sprite.Sprite):
         for row in self.healthMap:
             for col in row:
                 if col == "H":
-                    self.heart[str(self.heartIterator)] = Heart((lower_boundary, upper_boundary), (x, y))
+                    self.heart[str(self.heartIterator)] = Heart((lower_boundary, upper_boundary), (x, y), self.hearts)
                     self.heartIterator += 1
                 x += 32
                 lower_boundry = upper_boundary + 1
@@ -312,8 +308,9 @@ class Health(pygame.sprite.Sprite):
 
 class Heart(pygame.sprite.Sprite):
 
-    def __init__(self, boundary, pos):
+    def __init__(self, boundary, pos, group):
         pygame.sprite.Sprite.__init__(self)
+        self.add(group)
         self.upper_boundary = boundary[1]
         self.lower_boundary = boundary[0]
 
@@ -324,6 +321,7 @@ class Heart(pygame.sprite.Sprite):
         }
 
         self.image = self.images["10"]
+        self.amount = 10
         self.healthAmount = 0
         self.rect = self.image.get_rect()
         self.rect.topright = (pos[0], pos[1])
@@ -336,22 +334,18 @@ class Heart(pygame.sprite.Sprite):
             elif tempAmount < 5:
                 self.amount = 0
             del tempAmount
-        elif amount < self.lower_boundary:
+        elif self.healthAmount < self.lower_boundary:
             self.amount = 0
-        elif amount > self.upper_boundary:
+        elif self.healthAmount > self.upper_boundary:
             self.amount = 10
 
         x = self.images[str(self.amount)]
         return x
 
     def update(self):
-        for health in constant.player:
+        for player in constant.player:
             self.healthAmount = player.health
         self.image = self.check_image()
 
-        print("Heart Update")
-
-    def draw_component(self, screen):
+    def draw(self, screen):
         screen.blit(self.image, self.rect)
-
-        print("Heart Draw")

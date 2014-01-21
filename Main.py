@@ -144,6 +144,9 @@ class Game(object):
                     entity.update()
                     entity.check_death()
 
+                for player in constant.player:
+                    player.HUD.update_components()
+
 
 
                 #FPS LABEL

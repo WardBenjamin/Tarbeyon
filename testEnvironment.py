@@ -69,10 +69,10 @@ class Environment(object):
 
     def draw(self):
         #Clear the screen
-        self.wipe_display()
+        #self.wipe_display()
 
         #Draw the background
-        self.display.blit(self.bkg, self.bkgRect)
+        #self.display.blit(self.bkg, self.bkgRect)
 
         constant.blocks.draw(self.display)
         constant.player.draw(self.display)
