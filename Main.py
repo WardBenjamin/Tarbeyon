@@ -200,7 +200,7 @@ class Game(object):
             #Draw the text
 
             if self.showFPS:
-                self.screen.blit(self.fpsLabel, (10, 10))
+                self.screen.blit(self.fpsLabel, (10, 60))
 
             #Update the screen
             pygame.display.update()

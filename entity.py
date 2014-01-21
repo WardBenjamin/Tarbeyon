@@ -2,6 +2,7 @@ import pygame, random, os, math
 
 import constant
 from constant import loadMapFile
+from color import *
 
 class velocity(object):
     def __init__(self):
@@ -273,6 +274,13 @@ class Health(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.HUDcomponents)
 
+        self.font = pygame.font.Font(None, 15)
+
+        for player in constant.player:
+            self.health = player.health # Pull the health value from the player
+        self.healthString = "Hit Points:" + str(self.health)
+        self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
+
         self.healthMap = healthMap # Get the healthMap from the main HUD class 
         self.hearts = pygame.sprite.Group()
         self.heart = {}
@@ -286,10 +294,15 @@ class Health(pygame.sprite.Sprite):
     def update(self):
         for heart in self.hearts:
             heart.update() # Update each heart
+        for player in constant.player:
+            self.health = player.health
+            self.healthString = "Hit Points:" + str(self.health)
+            self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
 
     def draw(self, screen):
         for heart in self.hearts:
             heart.draw(screen)
+        screen.blit(self.healthLabel, (10, 40))
 
     def parse_health(self): # WIP, Find out how many hearts are needed
         x = 0
@@ -301,10 +314,10 @@ class Health(pygame.sprite.Sprite):
                 if col == "H":
                     self.heart[str(self.heartIterator)] = Heart((lower_boundary, upper_boundary), (x, y), self.hearts)
                     self.heartIterator += 1
-                x += 32
+                x += 16
                 lower_boundry = upper_boundary + 1
                 upper_boundary += 10
-            y += 32
+            y += 16
 
 class Heart(pygame.sprite.Sprite):
 
@@ -315,9 +328,9 @@ class Heart(pygame.sprite.Sprite):
         self.lower_boundary = boundary[0]
 
         self.images = {
-            "10"   : pygame.image.load("Images" + os.sep + "health" + os.sep + "full.png"),
-            "5"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "half_left.png"),
-            "0"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "empty.png"),
+            "10"   : pygame.image.load("Images" + os.sep + "health" + os.sep + "full_16.png"),
+            "5"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "half_left_16.png"),
+            "0"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "empty_16.png"),
         }
 
         self.image = self.images["10"]
