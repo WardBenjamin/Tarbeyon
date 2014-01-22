@@ -336,7 +336,7 @@ class Health(pygame.sprite.Sprite):
 
         self.health = player.stats.health
         self.maxHealth = player.stats.maxHealth
-        self.healthAmt = player.stats.health
+        self.healthAmt = 0
 
         self.image = pygame.Surface([int(self.health) + 4, 16])
         self.image.fill(colors["black2"])
@@ -380,6 +380,7 @@ class Health(pygame.sprite.Sprite):
             if self.health == self.healthAmt:
                 pass
             else:
+                self.health = self.healthAmt
                 # Render the red bar and find its rect
                 self.image1 = pygame.Surface([int(self.health), 12])
                 self.image1.fill(colors["red"])
