@@ -48,6 +48,7 @@ class Entity(pygame.sprite.Sprite):
 
         if isPlayer:
             self.HUD = HUD()
+            self.health = 50
 
 
         # Test
@@ -318,6 +319,7 @@ class Health(pygame.sprite.Sprite):
                 lower_boundry = upper_boundary + 1
                 upper_boundary += 10
             y += 16
+            x = 0
 
 class Heart(pygame.sprite.Sprite):
 
@@ -344,9 +346,10 @@ class Heart(pygame.sprite.Sprite):
             tempAmount = self.healthAmount - self.lower_boundary
             if tempAmount > 5:
                 self.amount = 5
+                print("TempAmt:", tempAmount, "Amt:", self.amount)
             elif tempAmount < 5:
                 self.amount = 0
-            del tempAmount
+                print("TempAmt:", tempAmount, "Amt:", self.amount)
         elif self.healthAmount < self.lower_boundary:
             self.amount = 0
         elif self.healthAmount > self.upper_boundary:
