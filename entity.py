@@ -48,14 +48,13 @@ class Entity(pygame.sprite.Sprite):
 
         if isPlayer:
             self.HUD = HUD()
-            self.health = 50
-
+            self.health = 10
 
         # Test
         print(self.name, "was created")
 
     def do_personal_init(self):
-        print("This is just a method to overwrite!")
+        print("This is just a method to ovebrwrite!")
 
 
     def check_death(self):
