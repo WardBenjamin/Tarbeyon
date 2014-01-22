@@ -295,16 +295,16 @@ class Square(Monster):
 #----------------------------------HUD--------------------------------------
 
 class HUD(object):
-    def __init__(self, player, width=128, height=128):
+    def __init__(self, player, width=128, height=32):
         self.components = pygame.sprite.Group()
 
         self.health = Health(player)
 
         print("HUD Init")
 
-        self.image = pygame.Surface([width, height])
-        self.image.fill(colors["white"])
-        self.rect = self.image.get_rect()
+        #self.image = pygame.Surface([width, height])
+        #self.image.fill(colors["white"])
+        #self.rect = self.image.get_rect()
 
         for component in constant.HUDcomponents:
             component.remove(constant.HUDcomponents)
@@ -314,20 +314,21 @@ class HUD(object):
         for component in self.components:
             component.update()
 
-    def draw_components(self):
-        self.image.fill(colors["white"])
+    def draw_components(self, screen):
+        #self.image.fill(colors["white"])
         for component in self.components:
-            component.draw(self.image)
+            component.draw(screen)
 
     def draw(self, screen):
-        self.draw_components()
-        screen.blit(self.image, self.rect)
+        #screen.blit(self.image, self.rect)
+        self.draw_components(screen)
+
 
     def update(self):
         self.update_components()
 
 class Health(pygame.sprite.Sprite):
-    def __init__(self, player):
+    def __init__(self, player, x=22, y=10):
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.HUDcomponents)
 
@@ -335,12 +336,18 @@ class Health(pygame.sprite.Sprite):
 
         self.health = player.stats.health
         self.maxHealth = player.stats.maxHealth
+        self.healthAmt = player.stats.health
 
         self.image = pygame.Surface([int(self.health) + 4, 16])
+        self.image.fill(colors["black2"])
+        self.image.set_colorkey(colors["black2"])
         self.rect = self.image.get_rect()
 
-        # Declaring all of the parts of the image and their rects
+        # Saving the  x and y for later
+        self.x = x
+        self.y = y
 
+        # Declaring all of the parts of the image and their rects
         self.image1 = pygame.Surface([int(self.maxHealth), 12])
         self.image1.fill(colors["red"])
         self.image2 = pygame.Surface([int(self.maxHealth) + 2, 14])
@@ -348,14 +355,14 @@ class Health(pygame.sprite.Sprite):
         self.image3 = pygame.Surface([int(self.maxHealth) + 4, 16])
         self.image3.fill(colors["white"])
         self.rect1 = self.image1.get_rect()
-        self.rect1.y = 10
-        self.rect1.x = 22
+        self.rect1.y = y
+        self.rect1.x = x
         self.rect2 = self.image2.get_rect()
-        self.rect2.y = self.rect1.y - 1
-        self.rect2.x = self.rect1.x - 1
+        self.rect2.y = y - 1
+        self.rect2.x = x - 1
         self.rect3 = self.image3.get_rect()
-        self.rect3.y = self.rect2.y - 1
-        self.rect3.x = self.rect2.x - 1
+        self.rect3.y = self.y - 2
+        self.rect3.x = self.x - 2
 
         self.healthString = "Hit Points:" + str(self.health)
         self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
@@ -369,18 +376,25 @@ class Health(pygame.sprite.Sprite):
 
     def update(self):
         for player in constant.player:
-            self.health = player.stats.health
+            self.healthAmt = player.stats.health
+            if self.health == self.healthAmt:
+                pass
+            else:
+                # Render the red bar and find its rect
+                self.image1 = pygame.Surface([int(self.health), 12])
+                self.image1.fill(colors["red"])
+                self.rect1 = self.image1.get_rect()
+                self.rect1.x = self.x
+                self.rect1.y = self.y
 
-            # Render the red bar
-            self.image1 = pygame.Surface([int(self.health), 12])
-            self.image1.fill(colors["red"])
+                print(self.rect1.width, self.health)
 
-            # Render the label
-            self.healthString = "Hit Points:" + str(self.health)
-            self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
+                # Render the label
+                self.healthString = "Hit Points:" + str(self.health)
+                self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
 
     def draw(self, screen):
-        self.image.fill(colors["white"])
+        self.image.fill(colors["black2"])
         self.image.blit(self.image3, self.rect3)
         self.image.blit(self.image2, self.rect2)
         self.image.blit(self.image1, self.rect1)
