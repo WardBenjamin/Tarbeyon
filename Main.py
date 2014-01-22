@@ -195,7 +195,7 @@ class Game(object):
 
             # Draw the components of the HUD
             for player in constant.player:
-                player.HUD.draw_components(self.screen)
+                player.HUD.draw(self.screen)
 
             #Draw the text
 

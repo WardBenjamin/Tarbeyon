@@ -29,9 +29,9 @@ class Level(object):
                     self.block["Block" + str(self.blockIterator)] = Block(colors["black"], (x, y), 16, 16)
                     self.blockIterator += 1
                 elif col == "X":
-                    self.player["Player" + str(self.playerIterator)] = Player(colors["yellow"], 16, 32, (x, y), 100, "Player", True)
+                    self.player["Player" + str(self.playerIterator)] = Player(colors["yellow"], 16, 32, (x, y), 100, "Player")
                 elif col == "S":
-                    self.monster["Monster" + str(self.monsterIterator)] = Square(colors["fuchsia"], 16, 16, (x, y), 50, ("Square" + str(self.squareIterator)), False)
+                    self.monster["Monster" + str(self.monsterIterator)] = Square(colors["fuchsia"], 16, 16, (x, y), 50, ("Square" + str(self.squareIterator)))
                     self.monsterIterator += 1
                     self.squareIterator += 1
                 elif col == "F":

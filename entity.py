@@ -9,9 +9,17 @@ class velocity(object):
         self.x = 0
         self.y = 0
 
+class stats(object):
+    def __init__(self):
+        self.health = 100
+        self.maxHealth = 100
+        self.xp = 0
+        self.damage = 1
+        self.armor = 0
+
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, color, width, height, pos, maxHealth, name, isPlayer):
+    def __init__(self, color, width, height, pos, maxHealth, name):
         # Basic Sprite stuff
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
@@ -46,20 +54,21 @@ class Entity(pygame.sprite.Sprite):
 
         self.do_personal_init()
 
-        if isPlayer:
-            self.HUD = HUD()
-            self.health = 10
-
         # Test
         print(self.name, "was created")
 
     def do_personal_init(self):
-        print("This is just a method to ovebrwrite!")
+        print("This is just a method to overwrite!")
 
 
     def check_death(self):
-        if self.health <= 0:
-            pygame.sprite.Sprite.kill()
+        try:
+            if self.health <= 0:
+                pygame.sprite.Sprite.kill()
+        except:
+            if self.stats.health <= 0:
+                pygame.sprite.Sprite.kill()
+
 
     def handle_movement(self):
 
@@ -115,17 +124,55 @@ class Entity(pygame.sprite.Sprite):
                     self.velocity.x = 0
 
 class Player(Entity):
-    def do_personal_init(self):
+    # Constructor. Pass in the color of the block and it's dimensions
+    def __init__(self, color, width, height, pos, maxHealth, name):
+        # Basic Sprite stuff
+        # Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+        self.add(constant.entities)
+
+        # Create an image of the block, and fill it with a color.
+        # Note: This could also be an image loaded from the disk.
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
+
+        # Fetch the rectangle object that has the dimensions of the image
+        # Update the position of this object by setting the values of rect.x and rect.y
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+        self.origin = self.image.get_rect()
+        self.origin.x = pos[0]
+        self.origin.y = pos[1]
+
+        self.velocity = velocity()
+        self.onGround = True
+        self.gravity = 1
+
+        self.name = name
+
         self.add(constant.player)
-        self.xp = 0
+
+        self.stats = stats()
+
         self.gravity = 0.5
         self.canJump = True
         self.ableToDJ = True
         self.doubleJump = True
-        self.hitTimer = 8
+
+        self.hitTimer = 0
         self.maxHitTimer = self.hitTimer
+
         self.effects = []
         self.validEffects = ["none", "regen", "fireTick"]
+
+        self.HUD = HUD(self)
+
+        # Test
+        print(self.name, "was created")
+
+
 
     #Currently not used/implemented
     def updateState(self):
@@ -186,8 +233,8 @@ class Player(Entity):
         for monster in constant.monsters: # Hit a monster
             if self.rect.colliderect(monster.rect):
                 if self.hitTimer <= 0:
-                    self.health = self.health - monster.damage
-                monster.health = monster.health - self.damage
+                    self.stats.health -= monster.damage
+                monster.health -= self.stats.damage
                 if self.velocity.y > 0: # Moving down; Hit the top side of the monster
                     self.rect.bottom = monster.rect.top
                     self.velocity.y = 0
@@ -210,8 +257,8 @@ class Player(Entity):
         for monster in constant.monsters: # Hit a monster
             if self.rect.colliderect(monster.rect):
                 if self.hitTimer <= 0:
-                    self.health = self.health - monster.damage
-                monster.health = monster.health - self.damage
+                    self.stats.health -= monster.damage
+                monster.health -= self.stats.damage
                 if self.velocity.x > 0: # Moving right; Hit the left side of the monster
                     self.rect.right = monster.rect.left
                     self.velocity.x = 0
@@ -234,7 +281,7 @@ class Monster(Entity):
         if self.health <= 0:
             self.kill()
             for player in constant.player:
-                player.xp += 1
+                player.stats.xp += 1
             self.print_death_log()
 
     def print_death_log(self):
@@ -248,14 +295,16 @@ class Square(Monster):
 #----------------------------------HUD--------------------------------------
 
 class HUD(object):
-    def __init__(self, healthMap="Player" + os.sep + "health.map"):
+    def __init__(self, player, width=128, height=128):
         self.components = pygame.sprite.Group()
+
+        self.health = Health(player)
 
         print("HUD Init")
 
-        self.healthPath = "Player" + os.sep + "health.map"
-        self.healthMap = loadMapFile(self.healthPath, False)
-        self.health = Health(self.healthMap)
+        self.image = pygame.Surface([width, height])
+        self.image.fill(colors["white"])
+        self.rect = self.image.get_rect()
 
         for component in constant.HUDcomponents:
             component.remove(constant.HUDcomponents)
@@ -265,23 +314,52 @@ class HUD(object):
         for component in self.components:
             component.update()
 
-    def draw_components(self, screen):
+    def draw_components(self):
+        self.image.fill(colors["white"])
         for component in self.components:
-            component.draw(screen)
+            component.draw(self.image)
+
+    def draw(self, screen):
+        self.draw_components()
+        screen.blit(self.image, self.rect)
+
+    def update(self):
+        self.update_components()
 
 class Health(pygame.sprite.Sprite):
-    def __init__(self, healthMap, screenX=928):
+    def __init__(self, player):
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.HUDcomponents)
 
         self.font = pygame.font.Font(None, 15)
 
-        for player in constant.player:
-            self.health = player.health # Pull the health value from the player
+        self.health = player.stats.health
+        self.maxHealth = player.stats.maxHealth
+
+        self.image = pygame.Surface([int(self.health) + 4, 16])
+        self.rect = self.image.get_rect()
+
+        # Declaring all of the parts of the image and their rects
+
+        self.image1 = pygame.Surface([int(self.maxHealth), 12])
+        self.image1.fill(colors["red"])
+        self.image2 = pygame.Surface([int(self.maxHealth) + 2, 14])
+        self.image2.fill(colors["grey"])
+        self.image3 = pygame.Surface([int(self.maxHealth) + 4, 16])
+        self.image3.fill(colors["white"])
+        self.rect1 = self.image1.get_rect()
+        self.rect1.y = 10
+        self.rect1.x = 22
+        self.rect2 = self.image2.get_rect()
+        self.rect2.y = self.rect1.y - 1
+        self.rect2.x = self.rect1.x - 1
+        self.rect3 = self.image3.get_rect()
+        self.rect3.y = self.rect2.y - 1
+        self.rect3.x = self.rect2.x - 1
+
         self.healthString = "Hit Points:" + str(self.health)
         self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
 
-        self.healthMap = healthMap # Get the healthMap from the main HUD class 
         self.hearts = pygame.sprite.Group()
         self.heart = {}
 
@@ -289,36 +367,25 @@ class Health(pygame.sprite.Sprite):
 
         self.heartIterator = 1
 
-        self.parse_health()
-
     def update(self):
-        for heart in self.hearts:
-            heart.update() # Update each heart
         for player in constant.player:
-            self.health = player.health
+            self.health = player.stats.health
+
+            # Render the red bar
+            self.image1 = pygame.Surface([int(self.health), 12])
+            self.image1.fill(colors["red"])
+
+            # Render the label
             self.healthString = "Hit Points:" + str(self.health)
             self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
 
     def draw(self, screen):
-        for heart in self.hearts:
-            heart.draw(screen)
-        screen.blit(self.healthLabel, (10, 40))
-
-    def parse_health(self): # WIP, Find out how many hearts are needed
-        x = 0
-        y = 0
-        lower_boundary = 0
-        upper_boundary = 10
-        for row in self.healthMap:
-            for col in row:
-                if col == "H":
-                    self.heart[str(self.heartIterator)] = Heart((lower_boundary, upper_boundary), (x, y), self.hearts)
-                    self.heartIterator += 1
-                x += 16
-                lower_boundry = upper_boundary + 1
-                upper_boundary += 10
-            y += 16
-            x = 0
+        self.image.fill(colors["white"])
+        self.image.blit(self.image3, self.rect3)
+        self.image.blit(self.image2, self.rect2)
+        self.image.blit(self.image1, self.rect1)
+        screen.blit(self.image, self.rect)
+        screen.blit(self.healthLabel, (self.rect.x, self.rect.y + 20))
 
 class Heart(pygame.sprite.Sprite):
 
@@ -335,32 +402,10 @@ class Heart(pygame.sprite.Sprite):
         }
 
         self.image = self.images["10"]
-        self.amount = 10
-        self.healthAmount = 0
         self.rect = self.image.get_rect()
         self.rect.topright = (pos[0], pos[1])
 
-    def check_image(self):
-        if self.lower_boundary <= self.healthAmount < self.upper_boundary:
-            tempAmount = self.healthAmount - self.lower_boundary
-            if tempAmount > 5:
-                self.amount = 5
-                print("TempAmt:", tempAmount, "Amt:", self.amount)
-            elif tempAmount < 5:
-                self.amount = 0
-                print("TempAmt:", tempAmount, "Amt:", self.amount)
-        elif self.healthAmount < self.lower_boundary:
-            self.amount = 0
-        elif self.healthAmount > self.upper_boundary:
-            self.amount = 10
-
-        x = self.images[str(self.amount)]
-        return x
-
-    def update(self):
-        for player in constant.player:
-            self.healthAmount = player.health
-        self.image = self.check_image()
+    def update(self): pass
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
