@@ -64,10 +64,10 @@ class Entity(pygame.sprite.Sprite):
     def check_death(self):
         try:
             if self.health <= 0:
-                pygame.sprite.Sprite.kill()
+                pygame.sprite.Sprite.kill(self)
         except:
             if self.stats.health <= 0:
-                pygame.sprite.Sprite.kill()
+                pygame.sprite.Sprite.kill(self)
 
 
     def handle_movement(self):
@@ -295,42 +295,42 @@ class Square(Monster):
 #----------------------------------HUD--------------------------------------
 
 class HUD(object):
-    def __init__(self, player, width=128, height=32):
+    def __init__(self, player, width=160, height=32):
         self.components = pygame.sprite.Group()
 
-        self.health = Health(player)
+        self.backgroundImage = pygame.image.load("Images" + os.sep + "hud" + os.sep + "hud.png")
+        self.image = pygame.Surface([width, height])
+        self.image.fill(colors["white"])
+        self.rect = self.image.get_rect()
+        self.image.blit(self.backgroundImage, self.rect)
+
+        self.health = Health(self, player)
 
         print("HUD Init")
-
-        #self.image = pygame.Surface([width, height])
-        #self.image.fill(colors["white"])
-        #self.rect = self.image.get_rect()
-
-        for component in constant.HUDcomponents:
-            component.remove(constant.HUDcomponents)
-            component.add(self.components)
 
     def update_components(self):
         for component in self.components:
             component.update()
 
-    def draw_components(self, screen):
-        #self.image.fill(colors["white"])
+    def draw_components(self):
+        self.image.fill(colors["white"])
+        self.image.blit(self.backgroundImage, self.rect)
         for component in self.components:
-            component.draw(screen)
+            component.draw(self.image)
 
     def draw(self, screen):
-        #screen.blit(self.image, self.rect)
-        self.draw_components(screen)
+        self.draw_components()
+        screen.blit(self.image, self.rect)
+
 
 
     def update(self):
         self.update_components()
 
 class Health(pygame.sprite.Sprite):
-    def __init__(self, player, x=22, y=10):
+    def __init__(self, HUD, player):
         pygame.sprite.Sprite.__init__(self)
-        self.add(constant.HUDcomponents)
+        self.add(HUD.components)
 
         self.font = pygame.font.Font(None, 15)
 
@@ -338,34 +338,12 @@ class Health(pygame.sprite.Sprite):
         self.maxHealth = player.stats.maxHealth
         self.healthAmt = 0
 
-        self.image = pygame.Surface([int(self.health) + 4, 16])
-        self.image.fill(colors["black2"])
-        self.image.set_colorkey(colors["black2"])
-        self.rect = self.image.get_rect()
-
-        # Saving the  x and y for later
-        self.x = x
-        self.y = y
-
-        # Declaring all of the parts of the image and their rects
-        self.image1 = pygame.Surface([int(self.maxHealth), 12])
-        self.image1.fill(colors["red"])
-        self.image2 = pygame.Surface([int(self.maxHealth) + 2, 14])
-        self.image2.fill(colors["grey"])
-        self.image3 = pygame.Surface([int(self.maxHealth) + 4, 16])
-        self.image3.fill(colors["white"])
-        self.rect1 = self.image1.get_rect()
-        self.rect1.y = y
-        self.rect1.x = x
-        self.rect2 = self.image2.get_rect()
-        self.rect2.y = y - 1
-        self.rect2.x = x - 1
-        self.rect3 = self.image3.get_rect()
-        self.rect3.y = self.y - 2
-        self.rect3.x = self.x - 2
+        self.image = pygame.Surface([self.maxHealth, 12])
+        self.image.fill(colors["health"])
+        self.rect = self.image.get_rect(topleft=(45, 14))
 
         self.healthString = "Hit Points:" + str(self.health)
-        self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
+        self.healthLabel = self.font.render(self.healthString, 20, colors["health"]) # Render the surface
 
         self.hearts = pygame.sprite.Group()
         self.heart = {}
@@ -382,25 +360,20 @@ class Health(pygame.sprite.Sprite):
             else:
                 self.health = self.healthAmt
                 # Render the red bar and find its rect
-                self.image1 = pygame.Surface([int(self.health), 12])
-                self.image1.fill(colors["red"])
-                self.rect1 = self.image1.get_rect()
-                self.rect1.x = self.x
-                self.rect1.y = self.y
+                self.image = pygame.Surface([self.health, 12])
+                self.image.fill(colors["health"])
+                self.rect = self.image.get_rect()
+                self.rect.topleft = (45, 14)
 
-                print(self.rect1.width, self.health)
+                print(self.rect.width, self.health)
 
                 # Render the label
                 self.healthString = "Hit Points:" + str(self.health)
-                self.healthLabel = self.font.render(self.healthString, 20, colors["red"]) # Render the surface
+                self.healthLabel = self.font.render(self.healthString, 20, colors["health"]) # Render the surface
 
     def draw(self, screen):
-        self.image.fill(colors["black2"])
-        self.image.blit(self.image3, self.rect3)
-        self.image.blit(self.image2, self.rect2)
-        self.image.blit(self.image1, self.rect1)
         screen.blit(self.image, self.rect)
-        screen.blit(self.healthLabel, (self.rect.x, self.rect.y + 20))
+        screen.blit(self.healthLabel, (59, 2))
 
 class Heart(pygame.sprite.Sprite):
 
@@ -411,9 +384,9 @@ class Heart(pygame.sprite.Sprite):
         self.lower_boundary = boundary[0]
 
         self.images = {
-            "10"   : pygame.image.load("Images" + os.sep + "health" + os.sep + "full_16.png"),
-            "5"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "half_left_16.png"),
-            "0"    : pygame.image.load("Images" + os.sep + "health" + os.sep + "empty_16.png"),
+            "10"   : pygame.image.load("Images" + os.sep + "hud" + os.sep + "health" + os.sep + "full_16.png"),
+            "5"    : pygame.image.load("Images" + os.sep + "hud" + os.sep + "health" + os.sep + "half_left_16.png"),
+            "0"    : pygame.image.load("Images" + os.sep + "hud" + os.sep + "health" + os.sep + "empty_16.png"),
         }
 
         self.image = self.images["10"]
