@@ -16,6 +16,7 @@ class stats(object):
         self.xp = 0
         self.damage = 1
         self.armor = 0
+        self.deaths = 0
 
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
@@ -67,8 +68,9 @@ class Entity(pygame.sprite.Sprite):
                 pygame.sprite.Sprite.kill(self)
         except:
             if self.stats.health <= 0:
-                pygame.sprite.Sprite.kill(self)
-
+                self.stats.health = self.stats.maxHealth
+                self.stats.deaths += 1
+                self.rect.topleft = self.origin.topleft
 
     def handle_movement(self):
 
@@ -374,26 +376,3 @@ class Health(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
         screen.blit(self.healthLabel, (59, 2))
-
-class Heart(pygame.sprite.Sprite):
-
-    def __init__(self, boundary, pos, group):
-        pygame.sprite.Sprite.__init__(self)
-        self.add(group)
-        self.upper_boundary = boundary[1]
-        self.lower_boundary = boundary[0]
-
-        self.images = {
-            "10"   : pygame.image.load("Images" + os.sep + "hud" + os.sep + "health" + os.sep + "full_16.png"),
-            "5"    : pygame.image.load("Images" + os.sep + "hud" + os.sep + "health" + os.sep + "half_left_16.png"),
-            "0"    : pygame.image.load("Images" + os.sep + "hud" + os.sep + "health" + os.sep + "empty_16.png"),
-        }
-
-        self.image = self.images["10"]
-        self.rect = self.image.get_rect()
-        self.rect.topright = (pos[0], pos[1])
-
-    def update(self): pass
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
