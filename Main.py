@@ -12,7 +12,7 @@ class Game(object):
     def __init__(self):
 
         #Debugging stuff
-        self.debug = True
+        self.debug = False
         self.debugShown = True
         self.debugMonsters = True
         self.showFPS = True
