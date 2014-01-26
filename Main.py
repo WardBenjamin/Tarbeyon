@@ -112,7 +112,7 @@ class Game(object):
                 self.fps = self.clock.get_fps()
                 self.fps = round(self.fps, 2)
                 self.fpsString = str(self.fps)
-                self.fpsLabel = self.fpsFont.render(self.fpsString, 20, self.black)
+                self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
                 
             elif self.state == "player_turn":
                 for event in pygame.event.get():
