@@ -1,21 +1,45 @@
 import pygame, random, os
 
 import constant
+from constant import blockid
 from color import *
 from entity import velocity
 
 
 class Block(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, color, pos, width, height):
+    def __init__(self, color, pos, width, height, name):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.blocks)
+
+        self.id = blockid["wall"]
+        self.name = name
 
         # Create an image of the block, and fill it with a color.
         # Note: This could also be an image loaded from the disk.
         self.image = pygame.Surface([width, height])
         self.image.fill(color)
+
+        # Fetch the rectangle object that has the dimensions of the image
+        # Update the position of this object by setting the values of rect.x and rect.y
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+class HealthBlock(pygame.sprite.Sprite):
+    # Constructor. Pass in the color of the block and it's dimensions
+    def __init__(self, pos, name):
+        # Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+        self.add(constant.blocks)
+
+        self.id = blockid["health"]
+        self.name = name
+
+        # Create an image of the block, and fill it with a color.
+        # Note: This could also be an image loaded from the disk.
+        self.image = pygame.image.load("Images" + os.sep + "blocks" + os.sep + "misc" + os.sep + "health.png")
 
         # Fetch the rectangle object that has the dimensions of the image
         # Update the position of this object by setting the values of rect.x and rect.y
@@ -48,6 +72,7 @@ class Fountain(pygame.sprite.Sprite):
         self.add(constant.blocks)
         self.add(constant.fountains)
 
+        self.id = blockid["fountain"]
         self.name = name
 
         self.particles = pygame.sprite.Group()

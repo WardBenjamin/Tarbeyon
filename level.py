@@ -8,17 +8,18 @@ class Level(object):
     def __init__(self, levelMap):
         self.levelMap = levelMap
         self.squareNum = 1
-        self.player = {}
         self.block = {}
         self.tile = {}
+        self.player = {}
         self.monster = {}
 
         self.blockIterator = 1
-        self.tileIterator = 1
+        self.healthBlockIterator = 1
         self.fountainIterator = 1
+        self.tileIterator = 1
+        self.playerIterator = 1
         self.monsterIterator = 1
         self.squareIterator = 1
-        self.playerIterator = 1
 
     def parse_level(self):
         x = 144
@@ -26,18 +27,24 @@ class Level(object):
         for row in self.levelMap:
             for col in row:
                 if col == "W":
-                    self.block["Block" + str(self.blockIterator)] = Block(colors["black"], (x, y), 16, 16)
+                    name = "Block " + str(self.blockIterator)
+                    self.block[name] = Block(colors["black"], (x, y), 16, 16, name)
                     self.blockIterator += 1
                 elif col == "X":
-                    self.player["Player" + str(self.playerIterator)] = Player(colors["yellow"], 16, 32, (x, y), 100, "Player")
+                    name = "Player " + str(self.playerIterator)
+                    self.player[name] = Player(colors["yellow"], 16, 32, (x, y), 100, name)
                 elif col == "S":
-                    self.monster["Monster" + str(self.monsterIterator)] = Square(colors["fuchsia"], 16, 16, (x, y), 50, ("Square" + str(self.squareIterator)))
+                    name = "Square " + str(self.squareIterator)
+                    self.monster["Monster " + str(self.monsterIterator)] = Square(colors["fuchsia"], 16, 16, (x, y), 50, name)
                     self.monsterIterator += 1
                     self.squareIterator += 1
                 elif col == "F":
-                    name = "Fountain" + str(self.fountainIterator)
+                    name = "Fountain " + str(self.fountainIterator)
                     self.block[name] = Fountain((x, y), name)
                     self.fountainIterator += 1
+                elif col == "H":
+                    name = "Health Block " + str(self.healthBlockIterator)
+                    self.block[name] = HealthBlock((x, y), name)
                 self.tile["Tile" + str(self.tileIterator)] = Tile(colors["white"], (x, y), 16, 16)
                 self.tileIterator += 1
                 x += 16

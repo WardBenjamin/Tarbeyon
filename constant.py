@@ -16,3 +16,9 @@ def loadMapFile(filename, level):
     map = file.read().split('\n')
     file.close()
     return map
+
+blockid = {
+	"wall"     : 1,
+	"health"   : 2,
+	"fountain" : 3
+}
