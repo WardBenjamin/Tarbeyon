@@ -233,10 +233,9 @@ class Player(Entity):
                 elif self.velocity.y < 0: # Moving up; Hit the bottom side of the block
                     self.rect.top = block.rect.bottom
                     self.velocity.y = 0
-                if block.id == blockid["health"] and self.stats.health < self.stats.maxHealth: # Checking if the block is a health block
-                    self.stats.health += 1
-                elif block.id == blockid["sewage"]:
-                    self.stats.health -= 1
+
+                block.do_effects(self)
+
                 if self.stats.health > self.stats.maxHealth:
                     self.stats.health = self.stats.maxHealth
 
@@ -263,8 +262,9 @@ class Player(Entity):
                 elif self.velocity.x < 0: # Moving left; Hit the right side of the block
                     self.rect.left = block.rect.right
                     self.velocity.x = 0
-                if block.name == "health": # Checking if the block is a health block
-                    self.stats.health += 1
+
+                block.do_effects(self)
+
                 if self.stats.health > self.stats.maxHealth:
                     self.stats.health = self.stats.maxHealth
 

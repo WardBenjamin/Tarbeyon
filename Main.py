@@ -24,6 +24,8 @@ class Game(object):
         pygame.font.init()
         pygame.mixer.init()
 
+        self.FPS = 60
+
         self.icon = pygame.image.load("Images" + os.sep + "icon.png")
 
         self.construct_screen() # Init the screen
@@ -86,7 +88,8 @@ class Game(object):
         #Loading Text Surfaces
         self.fpsFont = pygame.font.Font(None, 15)
 
-    def Tick(self):
+    def Tick(self, time):
+        print(time)
 
         if self.tickNumber >= 0:
             if self.state == "splashscreen":
@@ -238,8 +241,9 @@ def wipeScreenWhite(screen):
 Game = Game()
 
 while Game.Running:
-    Game.Tick()
-    Game.clock.tick(40)
+    milliseconds = Game.clock.tick(Game.FPS)  # Milliseconds passed since last frame
+    seconds = milliseconds / 1000.0 # Seconds passed since last frame (float)
+    Game.Tick(seconds)
 
 pygame.quit()
 sys.exit()

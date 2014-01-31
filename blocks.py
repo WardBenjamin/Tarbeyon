@@ -27,11 +27,14 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
+    def do_effects(self, player): pass
+
+
 class Wall(Block): pass
 
 class HealthBlock(Block):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, pos, name, ID):
+    def __init__(self, pos, name, ID, healAmount=1):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.blocks)
@@ -48,6 +51,12 @@ class HealthBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+
+        self.healAmount = healAmount
+
+    def do_effects(self, player):
+        player.stats.health += self.healAmount
+
 
 class SewageBlock(Block):
     # Constructor. Pass in the color of the block and it's dimensions
@@ -68,6 +77,38 @@ class SewageBlock(Block):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+
+    def do_effects(self, player):
+        armor = player.stats.armor
+        damage = 10 - (armor * 2)
+        if damage <= 0:
+            damage = 1
+        player.stats.health -= damage
+
+class LavaBlock(Block):
+    # Constructor. Pass in the color of the block and it's dimensions
+    def __init__(self, pos, name, ID):
+        # Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+        self.add(constant.blocks)
+
+        self.id = ID
+        self.name = name
+
+        # Create an image of the block, and fill it with a color.
+        # Note: This could also be an image loaded from the disk.
+        self.image = pygame.image.load("Images" + os.sep + "blocks" + os.sep + "misc" + os.sep + "sewage1.png")
+
+        # Fetch the rectangle object that has the dimensions of the image
+        # Update the position of this object by setting the values of rect.x and rect.y
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+    def do_effects(self, player):
+        armor = player.stats.armor
+        damage = 100 - (armor * 5)
+        player.stats.health -= damage
 
 class Tile(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
