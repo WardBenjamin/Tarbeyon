@@ -20,11 +20,13 @@ class stats(object):
 
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, color, width, height, pos, maxHealth, name):
+    def __init__(self, color, width, height, pos, maxHealth, name, ID):
         # Basic Sprite stuff
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.entities)
+
+        self.id = ID
 
         # Create an image of the block, and fill it with a color.
         # Note: This could also be an image loaded from the disk.
@@ -127,11 +129,15 @@ class Entity(pygame.sprite.Sprite):
 
 class Player(Entity):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, color, width, height, pos, maxHealth, name):
+    def __init__(self, color, width, height, pos, maxHealth, name, ID):
         # Basic Sprite stuff
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.entities)
+        self.add(constant.player)
+
+        self.name = name
+        self.id = ID
 
         # Create an image of the block, and fill it with a color.
         # Note: This could also be an image loaded from the disk.
@@ -151,10 +157,6 @@ class Player(Entity):
         self.velocity = velocity()
         self.onGround = True
         self.gravity = 1
-
-        self.name = name
-
-        self.add(constant.player)
 
         self.stats = stats()
 
@@ -177,15 +179,15 @@ class Player(Entity):
 
 
     #Currently not used/implemented
-    def updateState(self):
-        for state in self.effects:
-            if state in self.validEffects:
-                if state == "regen":
+    def check_status(self):
+        for status in self.statuses:
+            if status in self.validStatuses:
+                if status == "regen":
                     self.health += 1
-                elif state == "fireTick":
+                elif status == "fireTick":
                     self.health -= 1
                 else:
-                    print("Error in Player.updateState")
+                    print("Error in Player.check_status")
 
     def start_jump(self):
         self.velocity.y = -11
@@ -233,6 +235,8 @@ class Player(Entity):
                     self.velocity.y = 0
                 if block.id == blockid["health"] and self.stats.health < self.stats.maxHealth: # Checking if the block is a health block
                     self.stats.health += 1
+                elif block.id == blockid["sewage"]:
+                    self.stats.health -= 1
                 if self.stats.health > self.stats.maxHealth:
                     self.stats.health = self.stats.maxHealth
 

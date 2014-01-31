@@ -8,12 +8,12 @@ from entity import velocity
 
 class Block(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, color, pos, width, height, name):
+    def __init__(self, color, pos, width, height, name, ID):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.blocks)
 
-        self.id = blockid["wall"]
+        self.id = ID
         self.name = name
 
         # Create an image of the block, and fill it with a color.
@@ -27,19 +27,41 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
-class HealthBlock(pygame.sprite.Sprite):
+class Wall(Block): pass
+
+class HealthBlock(Block):
     # Constructor. Pass in the color of the block and it's dimensions
-    def __init__(self, pos, name):
+    def __init__(self, pos, name, ID):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.blocks)
 
-        self.id = blockid["health"]
+        self.id = ID
         self.name = name
 
         # Create an image of the block, and fill it with a color.
         # Note: This could also be an image loaded from the disk.
         self.image = pygame.image.load("Images" + os.sep + "blocks" + os.sep + "misc" + os.sep + "health.png")
+
+        # Fetch the rectangle object that has the dimensions of the image
+        # Update the position of this object by setting the values of rect.x and rect.y
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+
+class SewageBlock(Block):
+    # Constructor. Pass in the color of the block and it's dimensions
+    def __init__(self, pos, name, ID):
+        # Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+        self.add(constant.blocks)
+
+        self.id = ID
+        self.name = name
+
+        # Create an image of the block, and fill it with a color.
+        # Note: This could also be an image loaded from the disk.
+        self.image = pygame.image.load("Images" + os.sep + "blocks" + os.sep + "misc" + os.sep + "sewage1.png")
 
         # Fetch the rectangle object that has the dimensions of the image
         # Update the position of this object by setting the values of rect.x and rect.y
@@ -65,14 +87,14 @@ class Tile(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
-class Fountain(pygame.sprite.Sprite):
-    def __init__(self, pos, name):
+class Fountain(Block):
+    def __init__(self, pos, name, ID):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         self.add(constant.blocks)
         self.add(constant.fountains)
 
-        self.id = blockid["fountain"]
+        self.id = ID
         self.name = name
 
         self.particles = pygame.sprite.Group()

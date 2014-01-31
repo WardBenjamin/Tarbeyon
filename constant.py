@@ -17,8 +17,20 @@ def loadMapFile(filename, level):
     file.close()
     return map
 
+entityid = {
+	"player"   : 0,
+	"square"   : 1
+}
+
 blockid = {
+	"null"     : 0,
 	"wall"     : 1,
 	"health"   : 2,
-	"fountain" : 3
+	"sewage"   : 3,
+	"fountain" : 4
+}
+
+itemid = {
+	"null"    : 0,
+	"health"  : 1
 }

@@ -3,6 +3,7 @@ import os
 import sys
 
 from color import *
+from constant import blockid, itemid, entityid
 import level
 from entity import *
 
@@ -12,7 +13,7 @@ class Game(object):
     def __init__(self):
 
         #Debugging stuff
-        self.debug = False
+        self.debug = True
         self.debugShown = True
         self.debugMonsters = True
         self.showFPS = True
@@ -136,15 +137,27 @@ class Game(object):
 
                 for player in constant.player:
                     key = pygame.key.get_pressed()
-                    if key[pygame.K_SPACE] and self.debug:
+                    if key[pygame.K_SPACE] and self.debug: # Check for spacebar to bring player back to origin
                         player.rect.bottomleft = player.origin.bottomleft
+                    if key[pygame.K_RALT]  and self.debug: # Check for right alt to bring player as far down as possible
+                        player.velocity.y += 100
+                    if key[pygame.K_LALT]  and self.debug: # Check for left alt to bring player as far down as possible
+                        player.velocity.y += 100
 
                 for entity in constant.entities:
-                    entity.handle_movement()
-                    entity.update()
-                    entity.check_death()
+                    if entity.id == entityid["square"]: # Handle logic for the squares
+                        entity.handle_movement()
+                        entity.update()
+                        entity.check_death()
+                    elif entity.id == entityid["player"]:
+                        continue
+
+                    # Note: remember to call for an error here if there is an unknown entity id
 
                 for player in constant.player:
+                    player.handle_movement()
+                    player.update()
+                    player.check_death()
                     player.HUD.update_components()
 
 
