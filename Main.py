@@ -247,7 +247,7 @@ Game = Game()
 while Game.Running:
     milliseconds = Game.clock.tick(Game.FPS)  # Milliseconds passed since last frame
     seconds = milliseconds / 1000.0 # Seconds passed since last frame (float)
-    Game.time_passed += second
+    Game.time_passed += seconds
     if Game.time_passed > 0.025:
         Game.Tick(seconds)
         Game.time_passed = 0
