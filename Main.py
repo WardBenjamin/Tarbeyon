@@ -28,6 +28,9 @@ class Game(object):
         self.time = 0
         self.time_passed = 0
 
+        self.clock = pygame.time.Clock()
+        self.tickNumber = 0
+
         self.icon = pygame.image.load("Images" + os.sep + "icon.png")
 
         self.construct_screen() # Init the screen
@@ -35,9 +38,6 @@ class Game(object):
 
         self.level = level.level
         self.build_map() # Build the map
-
-        self.clock = pygame.time.Clock()
-        self.tickNumber = 0
 
         self.icon = pygame.image.load("Images" + os.sep + "Icon.png")
 
@@ -90,10 +90,12 @@ class Game(object):
         #Loading Text Surfaces
         self.fpsFont = pygame.font.Font(None, 15)
 
+        self.fps = self.clock.get_fps()
+        self.fps = round(self.fps)
+        self.fpsString = "FPS:" + str(self.fps)
+        self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
+
     def Tick(self, time):
-        print(time)
-        self.time = time
-        self.time_passed = time
 
         if self.tickNumber >= 0:
             if self.state == "splashscreen":
@@ -178,7 +180,6 @@ class Game(object):
             else:
                 print(self.state, "is not a valid game state")
 
-            self.Draw()
         self.tickNumber += 1
 
     def Draw(self):
@@ -243,14 +244,33 @@ def wipeScreenWhite(screen):
 
 
 Game = Game()
+milliseconds = 0
+tmilliseconds = 0
+seconds = 0
+tseconds = 0
+minutes = 0
+tminutes = 0
 
 while Game.Running:
-    milliseconds = Game.clock.tick(Game.FPS)  # Milliseconds passed since last frame
-    seconds = milliseconds / 1000.0 # Seconds passed since last frame (float)
+    if tmilliseconds > 1000:
+        tseconds += 1
+        tmilliseconds -= 1000
+    if tseconds > 60:
+        tminutes += 1
+        tseconds -= 60
+
+    print ("{}:{}".format(tminutes, tseconds))
+
+    milliseconds = Game.clock.tick_busy_loop(60)
+    seconds = milliseconds/1000.0
+    tmilliseconds += milliseconds
     Game.time_passed += seconds
-    if Game.time_passed > 0.025:
+    if Game.time_passed > 0.125:
         Game.Tick(seconds)
         Game.time_passed = 0
+        print("tick")
+    Game.Draw()
+    print("draw")
 
 pygame.quit()
 sys.exit()
