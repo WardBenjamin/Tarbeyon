@@ -265,7 +265,7 @@ while Game.Running:
     seconds = milliseconds/1000.0
     tmilliseconds += milliseconds
     Game.time_passed += seconds
-    if Game.time_passed > 0.020:
+    if Game.time_passed > 0.01818:
         Game.Tick(seconds)
         Game.time_passed = 0
         print("tick")

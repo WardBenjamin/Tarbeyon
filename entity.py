@@ -17,6 +17,7 @@ class stats(object):
         self.damage = 5
         self.armor = 0
         self.deaths = 0
+        self.speed = 3
 
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
@@ -204,9 +205,9 @@ class Player(Entity):
     def handle_movement(self):
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
-            self.velocity.x = -3
+            self.velocity.x = -1 * self.stats.speed
         if key[pygame.K_RIGHT]:
-            self.velocity.x = 3
+            self.velocity.x = self.stats.speed
         if key[pygame.K_UP] and not self.onGround and self.doubleJump and self.velocity.y >= -2:
             self.double_jump()
         if key[pygame.K_UP] and self.onGround:
