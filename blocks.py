@@ -80,9 +80,12 @@ class SewageBlock(Block):
 
     def do_effects(self, player):
         armor = player.stats.armor
-        damage = 10 - (armor * 2)
-        if damage <= 0:
-            damage = 1
+        if armor == 0:
+            damage = 5
+        else:
+            damage = 10 - (armor * 2)
+            if damage <= 0:
+                damage = 1
         player.stats.health -= damage
 
 class LavaBlock(Block):

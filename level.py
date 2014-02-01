@@ -47,7 +47,7 @@ class Level(object):
                     name = "Health Block " + str(self.healthBlockIterator)
                     self.block[name] = HealthBlock((x, y), name, blockid["health"])
                 elif col == "P":
-                    name = "Sewage Block " + str(self.healthBlockIterator)
+                    name = "Sewage Block " + str(self.sewageBlockIterator)
                     self.block[name] = SewageBlock((x, y), name, blockid["sewage"])
                 self.tile["Tile" + str(self.tileIterator)] = Tile(colors["white"], (x, y), 16, 16)
                 self.tileIterator += 1

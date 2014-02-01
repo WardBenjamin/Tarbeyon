@@ -25,6 +25,8 @@ class Game(object):
         pygame.mixer.init()
 
         self.FPS = 60
+        self.time = 0
+        self.time_passed = 0
 
         self.icon = pygame.image.load("Images" + os.sep + "icon.png")
 
@@ -43,9 +45,9 @@ class Game(object):
         if self.debug:
             self.state = "player_turn"
             print("Debug is enabled! Beware, strangers")
-        else:
-            self.intromusicplay = True
-            self.state = "splashscreen"
+#        else:
+#            self.intromusicplay = True
+#            self.state = "splashscreen"
 
     def construct_screen(self):
 
@@ -90,6 +92,8 @@ class Game(object):
 
     def Tick(self, time):
         print(time)
+        self.time = time
+        self.time_passed = time
 
         if self.tickNumber >= 0:
             if self.state == "splashscreen":
@@ -149,7 +153,7 @@ class Game(object):
 
                 for entity in constant.entities:
                     if entity.id == entityid["square"]: # Handle logic for the squares
-                        entity.handle_movement()
+                        entity.handle_movement(self.time_passed)
                         entity.update()
                         entity.check_death()
                     elif entity.id == entityid["player"]:
@@ -159,7 +163,7 @@ class Game(object):
 
                 for player in constant.player:
                     player.handle_movement()
-                    player.update()
+                    player.update(self.time_passed)
                     player.check_death()
                     player.HUD.update_components()
 

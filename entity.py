@@ -14,7 +14,7 @@ class stats(object):
         self.health = 100
         self.maxHealth = 100
         self.xp = 0
-        self.damage = 1
+        self.damage = 5
         self.armor = 0
         self.deaths = 0
 
@@ -74,7 +74,7 @@ class Entity(pygame.sprite.Sprite):
                 self.stats.deaths += 1
                 self.rect.topleft = self.origin.topleft
 
-    def handle_movement(self):
+    def handle_movement(self, time_passed):
 
         if not self.directionPicked:
             self.direction = random.randint(1, 100) #Randomly picking a direction
@@ -216,7 +216,7 @@ class Player(Entity):
         if not key[pygame.K_LEFT] and not key[pygame.K_RIGHT]:
             self.velocity.x = 0
 
-    def update(self):
+    def update(self, time_passed):
 
         if self.velocity.y > 20:
             self.velocity.y = 20
