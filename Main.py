@@ -268,9 +268,7 @@ while Game.Running:
     if Game.time_passed > 0.01818:
         Game.Tick(seconds)
         Game.time_passed = 0
-        print("tick")
     Game.Draw()
-    print("draw")
 
 pygame.quit()
 sys.exit()
