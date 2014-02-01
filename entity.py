@@ -17,7 +17,7 @@ class stats(object):
         self.damage = 5
         self.armor = 0
         self.deaths = 0
-        self.speed = 3
+        self.speed = 4
 
 class Entity(pygame.sprite.Sprite):
     # Constructor. Pass in the color of the block and it's dimensions
@@ -161,7 +161,7 @@ class Player(Entity):
 
         self.stats = stats()
 
-        self.gravity = 0.5
+        self.gravity = 1
         self.canJump = True
         self.ableToDJ = True
         self.doubleJump = True
@@ -191,7 +191,7 @@ class Player(Entity):
                     print("Error in Player.check_status")
 
     def start_jump(self):
-        self.velocity.y = -11
+        self.velocity.y = -1 * (4 * self.stats.speed)
         self.onGround = False
         if self.ableToDJ:
             self.doubleJump = True
@@ -199,7 +199,7 @@ class Player(Entity):
             self.doubleJump = False
 
     def double_jump(self):
-        self.velocity.y = -11
+        self.velocity.y = -1 * (4 * self.stats.speed)
         self.doubleJump = False
 
     def handle_movement(self):
