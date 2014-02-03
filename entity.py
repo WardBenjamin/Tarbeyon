@@ -10,7 +10,7 @@ class velocity(object):
         self.y = 0
 
 class stats(object):
-    def __init__(self, maxHealth, health, damage, xp):
+    def __init__(self):
         self.health = 100
         self.maxHealth = 100
         self.xp = 0
@@ -155,9 +155,11 @@ class Player(Entity):
         self.origin.x = pos[0]
         self.origin.y = pos[1]
 
-        self.stats = stats(maxHealth, maxHealth, 0, 0)
         self.velocity = velocity()
         self.onGround = True
+        self.gravity = 1
+
+        self.stats = stats()
 
         self.gravity = 1
         self.canJump = True
