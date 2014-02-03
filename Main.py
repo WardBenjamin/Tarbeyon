@@ -13,7 +13,7 @@ class Game(object):
     def __init__(self):
 
         #Debugging stuff
-        self.debug = True
+        self.debug = False
         self.debugShown = True
         self.debugMonsters = True
         self.showFPS = True
@@ -54,9 +54,9 @@ class Game(object):
         if self.debug:
             self.state = "player_turn"
             print("Debug is enabled! Beware, strangers")
-#        else:
-#            self.intromusicplay = True
-#            self.state = "splashscreen"
+        else:
+            self.intromusicplay = True
+            self.state = "splashscreen"
 
     def construct_screen(self):
 
@@ -126,7 +126,6 @@ class Game(object):
                     self.tickNumber = 0
 
                 if not self.debug:
-                    pygame.mouse.set_pos(self.screen_center)
                     pygame.mouse.set_visible(False)
                 if self.debug and self.debugShown:
                     print("Debug is enabled! Beware, strangers")
@@ -136,7 +135,7 @@ class Game(object):
                 self.fps = round(self.fps, 2)
                 self.fpsString = str(self.fps)
                 self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
-                
+
             elif self.state == "player_turn":
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
