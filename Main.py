@@ -27,6 +27,15 @@ class Game(object):
         self.FPS = 60
         self.time = 0
         self.time_passed = 0
+        self.milliseconds = 0
+        self.totalMilliseconds = 0
+        self.seconds = 0
+        self.totalSeconds = 0
+        self.minutes = 0
+        self.totalMinutes = 0
+
+        self.displayTime = True
+
 
         self.clock = pygame.time.Clock()
         self.tickNumber = 0
@@ -89,11 +98,15 @@ class Game(object):
 
         #Loading Text Surfaces
         self.fpsFont = pygame.font.Font(None, 15)
+        self.timeFont = pygame.font.Font(None, 15)
 
         self.fps = self.clock.get_fps()
         self.fps = round(self.fps)
         self.fpsString = "FPS:" + str(self.fps)
         self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
+
+        self.timeString = "{}:{}".format(self.totalMinutes, self.totalSeconds)
+        self.timeLabel = self.timeFont.render(self.timeString, 20, colors["black"])
 
     def Tick(self, time):
 
@@ -177,6 +190,9 @@ class Game(object):
                 self.fpsString = "FPS:" + str(self.fps)
                 self.fpsLabel = self.fpsFont.render(self.fpsString, 20, colors["black"])
 
+                self.timeString = "TIME: {}:{}".format(Game.totalMinutes, Game.totalSeconds)
+                self.timeLabel = self.timeFont.render(self.timeString, 20, colors["black"])
+
             else:
                 print(self.state, "is not a valid game state")
 
@@ -222,6 +238,7 @@ class Game(object):
 
             if self.showFPS:
                 self.screen.blit(self.fpsLabel, (10, 60))
+            self.screen.blit(self.timeLabel, (10, 70))
 
             #Update the screen
             pygame.display.update()
@@ -244,26 +261,24 @@ def wipeScreenWhite(screen):
 
 
 Game = Game()
-milliseconds = 0
-tmilliseconds = 0
-seconds = 0
-tseconds = 0
-minutes = 0
-tminutes = 0
 
 while Game.Running:
-    if tmilliseconds > 1000:
-        tseconds += 1
-        tmilliseconds -= 1000
-    if tseconds > 60:
-        tminutes += 1
-        tseconds -= 60
+    if Game.totalMilliseconds > 1000:
+        Game.totalSeconds += 1
+        Game.totalMilliseconds -= 1000
+        Game.displayTime = True
+    if Game.totalSeconds >= 60:
+        Game.totalMinutes += 1
+        Game.totalSeconds -= 60
+        Game.displayTime = True
 
-    print ("{}:{}".format(tminutes, tseconds))
+    if Game.displayTime:
+        print ("{}:{}".format(Game.totalMinutes, Game.totalSeconds))
+        Game.displayTime = False
 
     milliseconds = Game.clock.tick_busy_loop(60)
     seconds = milliseconds/1000.0
-    tmilliseconds += milliseconds
+    Game.totalMilliseconds += milliseconds
     Game.time_passed += seconds
     if Game.time_passed > 0.01818:
         Game.Tick(seconds)
